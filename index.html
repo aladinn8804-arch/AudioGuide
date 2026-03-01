@@ -692,7 +692,7 @@ function syncFromDrive(){
       st.style.color='var(--green)';
       btn.disabled=false;
       if(added+updated>0){
-        markDirty();renderLib();renderAdmFolders();
+        markDirty();saveLocalCache();renderLib();renderAdmFolders();
         toast(s('syncOk'));
       } else {
         toast(lang==='ru'?'Нет новых файлов':'No new files found');
@@ -759,7 +759,7 @@ function doPublish(){
       .then(function(r){return r.json();})
       .then(function(m){return fetch(GU+'/'+m.id+'?uploadType=media',{method:'PATCH',headers:{Authorization:'Bearer '+gToken,'Content-Type':'application/json'},body:body});});
   }).then(function(){
-    dirty=false;refreshPbar();toast(s('published'));
+    dirty=false;refreshPbar();saveLocalCache();toast(s('published'));
     btn.disabled=false;btn.innerHTML='\u2601 '+(lang==='ru'?'\u041e\u043f\u0443\u0431\u043b\u0438\u043a\u043e\u0432\u0430\u0442\u044c':'Publish');
   }).catch(function(e){
     console.error('publish:',e);toast(s('pubfail'));
@@ -768,29 +768,71 @@ function doPublish(){
 }
 
 // ── LOAD STRUCTURE (on app open, for all users) ───────────────
+var CACHE_KEY = 'ag_folders_cache';
+
+function saveLocalCache(){
+  try{
+    var clean=folders.map(function(f){
+      return{id:f.id,name:f.name,driveId:f.driveId||null,_open:f._open||false,
+        days:(f.days||[]).map(function(d){return{id:d.id,num:d.num||'',name:d.name,_open:d._open||false,tracks:(d.tracks||[]).map(ct)};}),
+        tracks:(f.tracks||[]).map(ct)};
+    });
+    function ct(t){return{id:t.id,name:t.name,url:t.url||null,duration:t.duration||'',blobId:t.blobId||null};}
+    localStorage.setItem(CACHE_KEY, JSON.stringify({folders:clean,savedAt:Date.now()}));
+  }catch(e){console.warn('Cache save failed:',e);}
+}
+
+function loadLocalCache(){
+  try{
+    var raw=localStorage.getItem(CACHE_KEY);
+    if(!raw) return false;
+    var data=JSON.parse(raw);
+    if(data&&data.folders&&data.folders.length){
+      folders=data.folders;
+      return true;
+    }
+  }catch(e){console.warn('Cache load failed:',e);}
+  return false;
+}
+
 function loadStructure(){
+  // 1. Load from local cache instantly (no blank screen)
+  if(loadLocalCache()){
+    renderLib();
+  }
+  // 2. Then sync from Drive in background to get latest
   var folderId=driveCfg.folderId, apiKey=driveCfg.apiKey;
   if(!folderId||!apiKey) return;
   var q=encodeURIComponent("'"+folderId+"' in parents and name='"+STRUCT_NAME+"' and trashed=false");
   fetch(GD+'?q='+q+'&fields=files(id)&key='+apiKey)
-    .then(function(r){return r.json();})
+    .then(function(r){
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.json();
+    })
     .then(function(data){
-      if(!data.files||!data.files.length) return;
-      return fetch(GD+'/'+data.files[0].id+'?alt=media&key='+apiKey).then(function(r){return r.json();});
+      if(!data.files||!data.files.length) return null;
+      return fetch(GD+'/'+data.files[0].id+'?alt=media&key='+apiKey)
+        .then(function(r){
+          if(!r.ok) throw new Error('HTTP '+r.status);
+          return r.json();
+        });
     })
     .then(function(st){
       if(!st||!st.folders) return;
-      // Restore drive cfg from structure if present
       if(st.driveCfg&&st.driveCfg.folderId&&!localStorage.getItem('ag_drive')){
         driveCfg.folderId=st.driveCfg.folderId;
       }
       folders=st.folders;
+      saveLocalCache(); // update cache with fresh Drive data
       renderLib();
     })
-    .catch(function(e){console.log('Structure load:',e.message);});
+    .catch(function(e){
+      console.log('Drive structure load failed (using cache):',e.message);
+      // Don't clear folders — keep whatever cache had
+    });
 }
 
-function markDirty(){dirty=true;refreshPbar();}
+function markDirty(){dirty=true;saveLocalCache();refreshPbar();}
 function refreshPbar(){document.getElementById('pbar').classList.toggle('hide',!isAdmin||!dirty);}
 
 // ── FOLDERS ───────────────────────────────────────────────────
