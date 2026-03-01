@@ -243,6 +243,7 @@ main::-webkit-scrollbar-thumb{background:rgba(212,168,83,.15);border-radius:2px}
     <label id="mDriveApiLabel">GOOGLE API KEY</label>
     <input type="text" id="driveApiInput" placeholder="AIzaSy...">
     <div class="modal-row" style="margin-bottom:8px">
+      <button class="btn btn-secondary" id="mDriveRefresh" onclick="refreshDrive()">↻ Refresh</button>
       <button class="btn btn-primary" id="mDriveSave" onclick="saveDrive()">Save & Connect</button>
     </div>
     <div id="driveStatus" style="font-size:12px;text-align:center;margin-bottom:4px;min-height:18px"></div>
@@ -586,14 +587,115 @@ function renderAdminFolderList(){
     </div>`).join('');
 }
 
-function saveDrive(){
+async function saveDrive(){
   driveConfig.folderId=document.getElementById('driveFolderInput').value.trim();
   driveConfig.apiKey=document.getElementById('driveApiInput').value.trim();
   localStorage.setItem('ag_drive',JSON.stringify(driveConfig));
   const st=document.getElementById('driveStatus');
   if(driveConfig.folderId&&driveConfig.apiKey){
-    st.textContent=t('driveOk'); st.style.color='var(--green)'; showToast(t('driveOk'));
+    st.innerHTML=`<span class="spin"></span> Connecting...`;
+    st.style.color='var(--txt3)';
+    const ok = await syncFromDrive();
+    if(ok){
+      st.textContent=t('driveOk'); st.style.color='var(--green)'; showToast(t('driveOk'));
+      renderLibrary(); renderAdminFolderList();
+    } else {
+      st.textContent=t('driveErr'); st.style.color='var(--red)';
+    }
   } else { st.textContent=t('driveErr'); st.style.color='var(--red)'; }
+}
+
+// ─── GOOGLE DRIVE SYNC ───────────────────────────────────────
+// Reads subfolders → app folders, audio files inside → tracks (with direct streaming URLs)
+// Drive folder must be shared "Anyone with the link can view"
+async function syncFromDrive(){
+  if(!driveConfig.folderId||!driveConfig.apiKey) return false;
+  const key=driveConfig.apiKey;
+  const rootId=driveConfig.folderId;
+  const BASE='https://www.googleapis.com/drive/v3/files';
+
+  try {
+    // 1. List subfolders inside root folder
+    const subRes = await fetch(
+      `${BASE}?q='${rootId}'+in+parents+and+mimeType='application/vnd.google-apps.folder'+and+trashed=false`+
+      `&fields=files(id,name,createdTime)&orderBy=createdTime&key=${key}`
+    );
+    if(!subRes.ok) return false;
+    const subData = await subRes.json();
+    const driveFolders = subData.files || [];
+
+    // 2. Also list audio files directly in root (not in subfolders) as a "General" folder
+    const rootFilesRes = await fetch(
+      `${BASE}?q='${rootId}'+in+parents+and+mimeType+contains+'audio/'+and+trashed=false`+
+      `&fields=files(id,name,mimeType,createdTime)&orderBy=createdTime&key=${key}`
+    );
+    const rootFilesData = rootFilesRes.ok ? await rootFilesRes.json() : {files:[]};
+    const rootAudioFiles = rootFilesData.files || [];
+
+    // 3. For each subfolder, fetch its audio files
+    const driveEntries = []; // {name, driveId, files:[]}
+
+    for(const sf of driveFolders){
+      const filesRes = await fetch(
+        `${BASE}?q='${sf.id}'+in+parents+and+mimeType+contains+'audio/'+and+trashed=false`+
+        `&fields=files(id,name,mimeType,createdTime)&orderBy=createdTime&key=${key}`
+      );
+      if(!filesRes.ok) continue;
+      const filesData = await filesRes.json();
+      driveEntries.push({ name: sf.name, driveId: sf.id, files: filesData.files||[] });
+    }
+
+    // Add root-level files as first entry if any
+    if(rootAudioFiles.length){
+      driveEntries.unshift({ name: lang==='ru'?'Общие':'General', driveId: rootId, files: rootAudioFiles });
+    }
+
+    if(!driveEntries.length) return true; // connected OK, just empty
+
+    // 4. Merge into folders array — update existing drive-sourced folders, add new ones
+    // Remove old drive-sourced folders first
+    folders = folders.filter(f => !f.driveSourced);
+
+    for(const entry of driveEntries){
+      const tracks = entry.files.map(f => ({
+        id: f.id,
+        name: f.name.replace(/\.[^.]+$/,''),
+        // Direct streaming URL — works because folder is public
+        url: `https://www.googleapis.com/drive/v3/files/${f.id}?alt=media&key=${key}`,
+        duration: ''
+      }));
+      folders.push({
+        id: 'drive_'+entry.driveId,
+        name: entry.name,
+        tracks,
+        _open: false,
+        driveSourced: true
+      });
+    }
+
+    saveFolders();
+    return true;
+  } catch(e) {
+    console.error('Drive sync error:', e);
+    return false;
+  }
+}
+
+// Auto-sync on load if drive is configured
+async function maybeAutoSync(){
+  if(driveConfig.folderId && driveConfig.apiKey){
+    await syncFromDrive();
+    renderMain();
+  }
+}
+
+async function refreshDrive(){
+  const st=document.getElementById('driveStatus');
+  st.innerHTML=`<span class="spin"></span> Syncing...`;
+  st.style.color='var(--txt3)';
+  const ok=await syncFromDrive();
+  if(ok){ st.textContent=t('driveOk'); st.style.color='var(--green)'; showToast(t('driveOk')); renderLibrary(); renderAdminFolderList(); }
+  else { st.textContent=t('driveErr'); st.style.color='var(--red)'; }
 }
 
 // ─── FOLDERS ─────────────────────────────────────────────────
@@ -685,7 +787,7 @@ let toastT;
 function showToast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),2500); }
 
 // ─── INIT ────────────────────────────────────────────────────
-openDB().then(()=>{ applyLang(); renderMain(); });
+openDB().then(async ()=>{ applyLang(); renderMain(); await maybeAutoSync(); });
 </script>
 </body>
 </html>
