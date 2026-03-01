@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f0f1c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="АудиоГид">
+<title>АудиоГид · AudioGuide</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async></script>
+<style>
+:root{--bg:#0f0f1c;--bg2:#13131f;--surf:#1a1a2e;--surf2:#20203c;--surf3:#2a2a50;--gold:#d4a853;--gold2:#f0c96a;--golddim:rgba(212,168,83,.12);--red:#e05c5c;--green:#5ce08a;--txt:#ede8d8;--txt2:#a09880;--txt3:#5a546e;--r:14px;--ph:175px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overscroll-behavior:none}
+body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--txt);display:flex;flex-direction:column;align-items:center;overflow:hidden;height:100vh}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 60% 40% at 15% 10%,rgba(212,168,83,.07),transparent 60%),radial-gradient(ellipse 50% 60% at 85% 90%,rgba(80,60,160,.08),transparent 60%)}
+.app{position:relative;z-index:1;width:100%;max-width:480px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+header{flex-shrink:0;padding:44px 22px 14px;display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid rgba(212,168,83,.12)}
+.eyebrow{font-size:10px;letter-spacing:3.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+h1{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;line-height:1}
+h1 em{font-style:italic;color:var(--gold2)}
+.hbtns{display:flex;gap:8px;align-items:center}
+.ibtn{background:var(--surf);border:1px solid rgba(212,168,83,.2);border-radius:20px;padding:6px 12px;color:var(--gold2);font-family:'Jost',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap}
+.ibtn:hover{background:var(--surf2);border-color:var(--gold)}
+.pbar{flex-shrink:0;background:rgba(212,168,83,.1);border-bottom:1px solid rgba(212,168,83,.2);padding:8px 22px;display:flex;align-items:center;gap:10px}
+.pbar.hide{display:none}
+.pbmsg{flex:1;font-size:12px;color:var(--gold)}
+.pbbtn{background:linear-gradient(135deg,var(--gold),#8b6010);color:#0f0f1c;border:none;border-radius:20px;padding:7px 18px;font-family:'Jost',sans-serif;font-size:12px;font-weight:600;cursor:pointer}
+.pbbtn:disabled{opacity:.5;cursor:not-allowed}
+.tabs{flex-shrink:0;display:flex;padding:0 22px;border-bottom:1px solid rgba(255,255,255,.05)}
+.tab{flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--txt3);font-family:'Jost',sans-serif;font-size:11px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;padding:11px 0;cursor:pointer;transition:all .2s}
+.tab.on{color:var(--gold2);border-bottom-color:var(--gold)}
+main{flex:1;overflow-y:auto;padding:14px 22px;padding-bottom:calc(var(--ph) + 14px)}
+main::-webkit-scrollbar{width:3px}
+main::-webkit-scrollbar-thumb{background:rgba(212,168,83,.15);border-radius:2px}
+.fc{background:var(--surf);border:1px solid rgba(255,255,255,.05);border-radius:var(--r);margin-bottom:10px;overflow:hidden;transition:border-color .2s}
+.fc.open{border-color:rgba(212,168,83,.25)}
+.fh{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer}
+.farr{font-size:9px;color:var(--txt3);transition:transform .2s;flex-shrink:0}
+.fc.open>.fh>.farr{transform:rotate(90deg)}
+.ficon{font-size:20px;flex-shrink:0}
+.finfo{flex:1;min-width:0}
+.fname{font-family:'Cormorant Garamond',serif;font-size:19px;font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .2s}
+.fh:hover .fname{color:var(--gold2)}
+.fmeta{font-size:11px;color:var(--txt3);margin-top:1px}
+.fadm{display:flex;gap:4px;flex-shrink:0}
+.fbody{padding:0 12px 10px}
+.dc{margin-bottom:6px;border-radius:10px;overflow:hidden;background:var(--surf2)}
+.dh{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;transition:background .15s}
+.dh:hover{background:var(--surf3)}
+.darr{font-size:8px;color:var(--txt3);transition:transform .2s;flex-shrink:0}
+.dc.open .darr{transform:rotate(90deg)}
+.dpill{background:rgba(212,168,83,.15);border:1px solid rgba(212,168,83,.25);border-radius:20px;padding:2px 10px;font-size:10px;color:var(--gold);flex-shrink:0}
+.dname{flex:1;font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dmeta{font-size:10px;color:var(--txt3);flex-shrink:0}
+.dadm{display:flex;gap:3px;flex-shrink:0}
+.tlist{padding:2px 10px 8px}
+.ti{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;cursor:pointer;transition:all .15s;margin-bottom:3px;border:1px solid transparent}
+.ti:hover{background:var(--surf3)}
+.ti.playing{background:var(--surf3);border-color:rgba(212,168,83,.3)}
+.tnum{font-size:11px;color:var(--txt3);width:20px;text-align:right;flex-shrink:0}
+.ti.playing .tnum{color:var(--gold)}
+.tthumb{width:30px;height:30px;border-radius:7px;background:var(--surf);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.ti.playing .tthumb{background:var(--gold)}
+.tname{flex:1;min-width:0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tdur{font-size:11px;color:var(--txt3);flex-shrink:0}
+.tdel{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:12px;padding:4px 5px;border-radius:5px;transition:all .15s;flex-shrink:0}
+.tdel:hover{color:var(--red);background:rgba(224,92,92,.12)}
+.eq{display:flex;align-items:flex-end;gap:2px;height:13px}
+.eq span{width:2.5px;background:#0f0f1c;border-radius:2px;animation:eq .7s ease-in-out infinite alternate}
+.eq span:nth-child(2){animation-delay:.15s}.eq span:nth-child(3){animation-delay:.3s}
+@keyframes eq{from{height:3px}to{height:12px}}
+.sb{width:26px;height:26px;border-radius:6px;background:transparent;border:none;color:var(--txt3);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.sb:hover{background:var(--surf3);color:var(--txt)}
+.sb.del:hover{color:var(--red);background:rgba(224,92,92,.12)}
+.empty{text-align:center;padding:60px 16px;color:var(--txt3)}
+.empty-icon{font-size:50px;margin-bottom:16px;opacity:.3}
+.empty h3{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--txt);margin-bottom:8px}
+.empty p{font-size:13px;line-height:1.7}
+.player{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(15,15,28,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(212,168,83,.18);padding:14px 22px 32px;z-index:100}
+.prow{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.part{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#7a5000);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.pinfo{flex:1;min-width:0}
+.ptitle{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.psub{font-size:11px;color:var(--txt3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.psub.on{color:var(--gold)}
+.prog{width:100%;height:3px;background:rgba(255,255,255,.08);border-radius:2px;cursor:pointer;margin-bottom:5px}
+.progf{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:2px;width:0%;transition:width .1s linear;position:relative}
+.progf::after{content:'';position:absolute;right:-4px;top:-3px;width:9px;height:9px;background:var(--gold2);border-radius:50%;box-shadow:0 0 6px rgba(240,201,106,.5)}
+.ptimes{display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);margin-bottom:10px}
+.ctrls{display:flex;align-items:center;justify-content:center;gap:22px}
+.ctrl{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:20px;padding:6px;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.ctrl:hover{color:var(--txt);transform:scale(1.1)}
+.ctrl.play{width:48px;height:48px;background:linear-gradient(135deg,var(--gold),#8b6010);border-radius:50%;color:#0f0f1c;font-size:20px}
+.ctrl.play:hover{transform:scale(1.05);filter:brightness(1.1)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.ov.show{opacity:1;pointer-events:all}
+.modal{background:var(--bg2);border:1px solid rgba(212,168,83,.15);border-radius:20px 20px 0 0;padding:24px 22px 40px;width:100%;max-width:480px;transform:translateY(100%);transition:transform .25s cubic-bezier(.22,1,.36,1);max-height:85vh;overflow-y:auto}
+.modal::-webkit-scrollbar{width:3px}
+.modal::-webkit-scrollbar-thumb{background:rgba(212,168,83,.15)}
+.ov.show .modal{transform:translateY(0)}
+.mtitle{font-family:'Cormorant Garamond',serif;font-size:22px;font-style:italic;color:var(--gold2);margin-bottom:18px}
+.modal label{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+.modal input{width:100%;background:var(--surf);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 16px;color:var(--txt);font-family:'Jost',sans-serif;font-size:14px;outline:none;transition:border-color .2s;margin-bottom:16px}
+.modal input:focus{border-color:var(--gold)}
+.modal input::placeholder{color:var(--txt3)}
+.mrow{display:flex;gap:10px;margin-top:4px}
+.btn{flex:1;padding:13px;border-radius:11px;border:none;font-family:'Jost',sans-serif;font-size:13px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.btn-p{background:linear-gradient(135deg,var(--gold),#8b6010);color:#0f0f1c}
+.btn-p:hover{filter:brightness(1.1)}
+.btn-p:disabled{opacity:.5;cursor:not-allowed}
+.btn-s{background:var(--surf);color:var(--txt2);border:1px solid rgba(255,255,255,.08)}
+.btn-s:hover{background:var(--surf2)}
+.btn-d{background:rgba(224,92,92,.15);color:var(--red);border:1px solid rgba(224,92,92,.2)}
+.btn-d:hover{background:rgba(224,92,92,.25)}
+.btn-g{background:#fff;color:#333;display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;font-weight:500;width:100%;padding:13px;border-radius:11px;border:none;cursor:pointer;margin-bottom:12px;transition:background .2s}
+.btn-g:hover{background:#f0f0f0}
+.divider{height:1px;background:rgba(255,255,255,.06);margin:16px 0}
+.badge{background:rgba(212,168,83,.15);border:1px solid rgba(212,168,83,.3);border-radius:20px;padding:3px 10px;font-size:10px;color:var(--gold);letter-spacing:1px}
+.ibox{background:var(--surf);border:1px solid rgba(212,168,83,.15);border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.7;margin-bottom:12px}
+.upzone{border:2px dashed rgba(212,168,83,.25);border-radius:var(--r);padding:28px;text-align:center;cursor:pointer;margin-bottom:14px;transition:all .2s}
+.upzone:hover{border-color:var(--gold);background:var(--golddim)}
+.fqueue{margin:10px 0 14px}
+.fqi{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.fqi:last-child{border-bottom:none}
+.fqn{font-size:12px;color:var(--txt3);width:20px;text-align:right}
+.fqname{flex:1;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fqrm{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:13px;padding:4px}
+.fqrm:hover{color:var(--red)}
+.chip{display:inline-block;background:var(--surf2);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:5px 12px;font-size:12px;cursor:pointer;margin:3px;transition:all .15s}
+.chip.on{background:var(--golddim);border-color:rgba(212,168,83,.4);color:var(--gold2)}
+.mopt{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;border:1px solid transparent;margin-bottom:4px;transition:background .15s}
+.mopt:hover{background:var(--surf2)}
+.mopt.on{background:var(--surf2);border-color:rgba(212,168,83,.3)}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(212,168,83,.3);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surf2);border:1px solid rgba(212,168,83,.3);border-radius:30px;padding:10px 20px;font-size:13px;z-index:999;transition:transform .3s cubic-bezier(.22,1,.36,1);white-space:nowrap;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.gavatar{width:28px;height:28px;border-radius:50%;object-fit:cover}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div>
+      <div class="eyebrow" id="eyebrow">Travel Audio</div>
+      <h1 id="appTitle">Аудио<em>Гид</em></h1>
+    </div>
+    <div class="hbtns">
+      <button class="ibtn" id="langBtn" onclick="toggleLang()">EN</button>
+      <button class="ibtn" onclick="openAdmin()">&#9881;</button>
+    </div>
+  </header>
+
+  <div class="pbar hide" id="pbar">
+    <span class="pbmsg" id="pbmsg">Unsaved changes</span>
+    <button class="pbbtn" id="pbbtn" onclick="doPublish()">&#9729; Publish</button>
+  </div>
+
+  <nav class="tabs">
+    <button class="tab on" id="tabLib" onclick="showTab('lib')">Guides</button>
+    <button class="tab" id="tabInfo" onclick="showTab('info')">About</button>
+  </nav>
+  <main id="main"></main>
+
+  <div class="player">
+    <div class="prow">
+      <div class="part">&#128506;</div>
+      <div class="pinfo">
+        <div class="ptitle" id="ptitle">&#8212;</div>
+        <div class="psub" id="psub">&#8212;</div>
+      </div>
+    </div>
+    <div class="prog" onclick="seek(event)"><div class="progf" id="progf"></div></div>
+    <div class="ptimes"><span id="tcur">0:00</span><span id="ttot">0:00</span></div>
+    <div class="ctrls">
+      <button class="ctrl" onclick="skip(-1)">&#9198;</button>
+      <button class="ctrl play" id="playbtn" onclick="togglePlay()">&#9654;</button>
+      <button class="ctrl" onclick="skip(1)">&#9197;</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="ov" id="ovLogin">
+  <div class="modal">
+    <div class="mtitle" id="mlt">Admin Access</div>
+    <p style="font-size:13px;color:var(--txt2);margin-bottom:20px" id="mld">Sign in with Google to manage content.</p>
+    <button class="btn-g" onclick="googleLogin()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 002.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 01-7.18-2.54H1.83v2.07A8 8 0 008.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 010-3.04V5.41H1.83a8 8 0 000 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 001.83 5.4L4.5 7.49a4.77 4.77 0 014.48-3.3z"/></svg>
+      Sign in with Google
+    </button>
+    <button class="btn btn-s" onclick="closeOv('ovLogin')" id="mlc">Cancel</button>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="ov" id="ovAdmin">
+  <div class="modal">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div class="mtitle" style="margin-bottom:0" id="mat">Admin Panel</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <img id="gavatar" class="gavatar" style="display:none">
+        <span class="badge">ADMIN</span>
+      </div>
+    </div>
+    <div id="gname" style="font-size:12px;color:var(--txt3);margin-bottom:14px"></div>
+
+    <!-- Drive config -->
+    <label id="lDriveFolder">GOOGLE DRIVE FOLDER ID</label>
+    <input type="text" id="inDriveFolder" placeholder="1CMJ1JtSTqE9A_TXSChZ...">
+    <label id="lDriveKey">API KEY</label>
+    <input type="text" id="inDriveKey" placeholder="AIzaSy...">
+    <div class="mrow" style="margin-bottom:8px">
+      <button class="btn btn-s" id="bDriveSave" onclick="saveDriveCfg()">Save</button>
+      <button class="btn btn-p" id="bDriveSync" onclick="syncFromDrive()">&#8635; Sync from Drive</button>
+    </div>
+    <div id="driveStatus" style="font-size:12px;min-height:18px;margin-bottom:4px;text-align:center"></div>
+
+    <div class="divider"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold)" id="mfl">FOLDERS</div>
+      <button class="ibtn" id="mfnew" onclick="openFolderModal(null)">+ New</button>
+    </div>
+    <div id="admfolders"></div>
+    <div class="divider"></div>
+    <div class="mrow">
+      <button class="btn btn-d" id="mlogout" onclick="logout()">Logout</button>
+      <button class="btn btn-s" id="mclose" onclick="closeOv('ovAdmin')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOLDER MODAL -->
+<div class="ov" id="ovFolder">
+  <div class="modal">
+    <div class="mtitle" id="fmtitle">New Folder</div>
+    <label id="fmlabel">FOLDER NAME</label>
+    <input type="text" id="finput" onkeydown="if(event.key==='Enter')saveFolder()">
+    <div class="mrow">
+      <button class="btn btn-s" onclick="closeOv('ovFolder')" id="fmcancel">Cancel</button>
+      <button class="btn btn-p" onclick="saveFolder()" id="fmsave">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- DAY MODAL -->
+<div class="ov" id="ovDay">
+  <div class="modal">
+    <div class="mtitle" id="dmtitle">New Section</div>
+    <label id="dmlabel1">DAY NUMBER (optional)</label>
+    <input type="text" id="dnuminput" placeholder="1">
+    <label id="dmlabel2">SECTION NAME</label>
+    <input type="text" id="dnameinput" placeholder="e.g. Colosseum Tour" onkeydown="if(event.key==='Enter')saveDay()">
+    <div class="mrow">
+      <button class="btn btn-s" onclick="closeOv('ovDay')" id="dmcancel">Cancel</button>
+      <button class="btn btn-p" onclick="saveDay()" id="dmsave">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div class="ov" id="ovUpload">
+  <div class="modal">
+    <div class="mtitle" id="umtitle">Upload Tracks</div>
+    <div id="utarget" style="font-size:12px;color:var(--gold);margin-bottom:10px"></div>
+    <div id="udaysel" style="display:none;margin-bottom:14px">
+      <label id="udaylabel">ADD TO SECTION</label>
+      <div id="udaychips"></div>
+    </div>
+    <div class="upzone" onclick="document.getElementById('ufile').click()">
+      <div style="font-size:28px;margin-bottom:8px">&#127911;</div>
+      <div style="font-size:14px;font-family:'Cormorant Garamond',serif" id="uzonelabel">Choose audio files</div>
+      <div style="font-size:11px;color:var(--txt3);margin-top:4px">MP3, WAV, M4A, OGG</div>
+    </div>
+    <input type="file" id="ufile" accept="audio/*" multiple style="display:none" onchange="filesChosen(event)">
+    <div id="uqueue" class="fqueue"></div>
+    <div id="uprog" style="display:none;font-size:12px;color:var(--txt3);margin-bottom:10px"></div>
+    <div class="mrow">
+      <button class="btn btn-s" onclick="closeOv('ovUpload')" id="umcancel">Cancel</button>
+      <button class="btn btn-p" onclick="confirmUpload()" id="umconfirm">Upload</button>
+    </div>
+  </div>
+</div>
+
+<!-- MOVE MODAL -->
+<div class="ov" id="ovMove">
+  <div class="modal">
+    <div class="mtitle" id="mmtitle">Move Track</div>
+    <div id="mmtrack" style="font-size:13px;color:var(--txt2);margin-bottom:14px"></div>
+    <label id="mmlabel">MOVE TO SECTION</label>
+    <div id="mmopts" style="margin-bottom:14px"></div>
+    <div class="mrow">
+      <button class="btn btn-s" onclick="closeOv('ovMove')" id="mmcancel">Cancel</button>
+      <button class="btn btn-p" onclick="confirmMove()" id="mmconfirm">Move</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<audio id="aud"></audio>
+
+<script>
+// ── CONFIG (hardcoded defaults, can be overridden in admin) ──
+var DEF_FOLDER = '1CMJ1JtSTqE9A_TXSChZOG-rf6vFl954X';
+var DEF_KEY    = 'AIzaSyBsZbfhcO8orXPsZDJ1jZ_xyRmpu-0FT70';
+var STRUCT_NAME = 'audiogide_structure.json';
+var GD  = 'https://www.googleapis.com/drive/v3/files';
+var GU  = 'https://www.googleapis.com/upload/drive/v3/files';
+var CLIENT_ID = '555336812897-c58u8j2lvrrcn9qa1vf8ooejerfjb8u6.apps.googleusercontent.com';
+
+// Persisted drive config
+var driveCfg = JSON.parse(localStorage.getItem('ag_drive') || 'null') || {folderId: DEF_FOLDER, apiKey: DEF_KEY};
+
+// ── STATE ────────────────────────────────────────────────────
+var lang    = localStorage.getItem('ag_lang') || 'ru';
+var isAdmin = false;
+var gToken  = null;
+var gUser   = null;
+var dirty   = false;
+var tab     = 'lib';
+var folders = [];
+var curFid=null, curDid=null, curIdx=-1, curList=[], playing=false;
+var editFid=null, editDfid=null, editDid=null;
+var upFid=null, upDid=null, pending=[];
+var mvInfo=null, mvTarget;
+
+// ── IDB ──────────────────────────────────────────────────────
+var db;
+function openDB(){
+  return new Promise(function(res,rej){
+    var r=indexedDB.open('AudioGuideDB',2);
+    r.onupgradeneeded=function(e){if(!e.target.result.objectStoreNames.contains('files'))e.target.result.createObjectStore('files',{keyPath:'id'});};
+    r.onsuccess=function(e){db=e.target.result;res();};r.onerror=rej;
+  });
+}
+function blobSave(id,blob){return new Promise(function(res,rej){var tx=db.transaction('files','readwrite');tx.objectStore('files').put({id:id,blob:blob});tx.oncomplete=res;tx.onerror=rej;});}
+function blobGet(id){return new Promise(function(res,rej){var tx=db.transaction('files','readonly');var r=tx.objectStore('files').get(id);r.onsuccess=function(e){res(e.target.result?e.target.result.blob:null);};r.onerror=rej;});}
+function blobDel(id){return new Promise(function(res){var tx=db.transaction('files','readwrite');tx.objectStore('files').delete(id);tx.oncomplete=res;});}
+
+// ── I18N ─────────────────────────────────────────────────────
+var STR={
+  ru:{ey:'Аудиопутеводитель',tl:'Аудио<em>Гид</em>',tLib:'Гиды',tInfo:'О приложении',
+      nof:'Пока нет папок',nofd:'Войдите как администратор для управления.',not:'Нет треков',
+      pid:'Выберите трек',pids:'Нажмите на трек',ts:'трек',tf:'трека',tm:'треков',
+      lt:'Доступ администратора',ld:'Войдите через Google для управления.',lc:'Отмена',
+      at:'Панель администратора',fl:'ПАПКИ',fn:'+ Новая',lo:'Выйти',cl:'Закрыть',
+      ftn:'Новая папка',fte:'Переименовать',flb:'НАЗВАНИЕ',fc:'Отмена',fs:'Сохранить',
+      dtn:'Новый раздел',dte:'Переименовать раздел',dl1:'НОМЕР ДНЯ (необязательно)',
+      dl2:'НАЗВАНИЕ РАЗДЕЛА',dc:'Отмена',ds:'Сохранить',ad:'Раздел',
+      ut:'Загрузить треки',udl:'ДОБАВИТЬ В РАЗДЕЛ',uz:'Выберите аудиофайлы',
+      uc:'Отмена',uf:'Загрузить',uploading:'Загрузка',ns:'Без раздела',
+      mt:'Переместить трек',ml:'ПЕРЕМЕСТИТЬ В РАЗДЕЛ',mc:'Отмена',mf:'Переместить',
+      saved:'Сохранено ✓',deleted:'Удалено',uploaded:'Загружено ✓',moved:'Перемещено ✓',
+      published:'Опубликовано ✓',pubfail:'Ошибка публикации',pbmsg:'Несохранённые изменения',
+      cur:'(текущий)',day:'День ',sec:'разд.',
+      lDriveFolder:'ID ПАПКИ GOOGLE DRIVE',lDriveKey:'API КЛЮЧ',
+      bDriveSave:'Сохранить',bDriveSync:'&#8635; Синхронизировать',
+      syncOk:'Синхронизировано ✓',syncErr:'Ошибка синхронизации',syncing:'Синхронизация...',
+      ititle:'О приложении',
+      ibody:'<p style="font-size:14px;line-height:1.8;color:var(--txt2)"><strong style="color:var(--txt)">АудиоГид</strong> — аудиопутеводитель для путешественников.</p><br><p style="font-size:13px;color:var(--txt3);line-height:1.7">Управление — через кнопку ⚙.</p>'},
+  en:{ey:'Travel Audio',tl:'Audio<em>Guide</em>',tLib:'Guides',tInfo:'About',
+      nof:'No folders yet',nofd:'Log in as admin to manage content.',not:'No tracks',
+      pid:'Select a track',pids:'Tap any track to start',ts:'track',tf:'tracks',tm:'tracks',
+      lt:'Admin Access',ld:'Sign in with Google to manage content.',lc:'Cancel',
+      at:'Admin Panel',fl:'FOLDERS',fn:'+ New',lo:'Logout',cl:'Close',
+      ftn:'New Folder',fte:'Rename Folder',flb:'FOLDER NAME',fc:'Cancel',fs:'Save',
+      dtn:'New Section',dte:'Rename Section',dl1:'DAY NUMBER (optional)',
+      dl2:'SECTION NAME',dc:'Cancel',ds:'Save',ad:'Section',
+      ut:'Upload Tracks',udl:'ADD TO SECTION',uz:'Choose audio files',
+      uc:'Cancel',uf:'Upload',uploading:'Uploading',ns:'No section',
+      mt:'Move Track',ml:'MOVE TO SECTION',mc:'Cancel',mf:'Move',
+      saved:'Saved ✓',deleted:'Deleted',uploaded:'Uploaded ✓',moved:'Moved ✓',
+      published:'Published ✓',pubfail:'Publish failed',pbmsg:'Unsaved changes',
+      cur:'(current)',day:'Day ',sec:'sec.',
+      lDriveFolder:'GOOGLE DRIVE FOLDER ID',lDriveKey:'API KEY',
+      bDriveSave:'Save',bDriveSync:'&#8635; Sync from Drive',
+      syncOk:'Synced ✓',syncErr:'Sync error',syncing:'Syncing...',
+      ititle:'About',
+      ibody:'<p style="font-size:14px;line-height:1.8;color:var(--txt2)"><strong style="color:var(--txt)">AudioGuide</strong> — your travel audio companion.</p><br><p style="font-size:13px;color:var(--txt3);line-height:1.7">Manage content via the gear button.</p>'}
+};
+function s(k){return(STR[lang]&&STR[lang][k]!==undefined)?STR[lang][k]:k;}
+function trN(n){
+  if(lang==='en')return n+' '+(n===1?s('ts'):s('tm'));
+  var m=n%10,h=n%100;
+  if(m===1&&h!==11)return n+' '+s('ts');
+  if(m>=2&&m<=4&&(h<10||h>=20))return n+' '+s('tf');
+  return n+' '+s('tm');
+}
+function toggleLang(){lang=lang==='ru'?'en':'ru';localStorage.setItem('ag_lang',lang);applyLang();render();}
+function applyLang(){
+  function g(id){return document.getElementById(id);}
+  g('eyebrow').textContent=s('ey'); g('appTitle').innerHTML=s('tl');
+  g('langBtn').textContent=lang==='ru'?'EN':'RU';
+  g('tabLib').textContent=s('tLib'); g('tabInfo').textContent=s('tInfo');
+  g('mlt').textContent=s('lt'); g('mld').textContent=s('ld'); g('mlc').textContent=s('lc');
+  g('mat').textContent=s('at'); g('mfl').textContent=s('fl'); g('mfnew').textContent=s('fn');
+  g('mlogout').textContent=s('lo'); g('mclose').textContent=s('cl');
+  g('lDriveFolder').textContent=s('lDriveFolder'); g('lDriveKey').textContent=s('lDriveKey');
+  g('bDriveSave').textContent=s('bDriveSave'); g('bDriveSync').innerHTML=s('bDriveSync');
+  g('fmtitle').textContent=s('ftn'); g('fmlabel').textContent=s('flb');
+  g('fmcancel').textContent=s('fc'); g('fmsave').textContent=s('fs');
+  g('dmtitle').textContent=s('dtn'); g('dmlabel1').textContent=s('dl1');
+  g('dmlabel2').textContent=s('dl2'); g('dmcancel').textContent=s('dc'); g('dmsave').textContent=s('ds');
+  g('umtitle').textContent=s('ut'); g('udaylabel').textContent=s('udl');
+  g('uzonelabel').textContent=s('uz'); g('umcancel').textContent=s('uc'); g('umconfirm').textContent=s('uf');
+  g('mmtitle').textContent=s('mt'); g('mmlabel').textContent=s('ml');
+  g('mmcancel').textContent=s('mc'); g('mmconfirm').textContent=s('mf');
+  g('pbmsg').textContent=s('pbmsg');
+  if(curIdx<0){g('ptitle').textContent=s('pid');g('psub').textContent=s('pids');g('psub').className='psub';}
+}
+
+// ── TABS ─────────────────────────────────────────────────────
+function showTab(t){tab=t;document.getElementById('tabLib').classList.toggle('on',t==='lib');document.getElementById('tabInfo').classList.toggle('on',t==='info');render();}
+function render(){tab==='lib'?renderLib():renderInfo();}
+
+// ── LIBRARY ──────────────────────────────────────────────────
+function renderLib(){
+  var el=document.getElementById('main');
+  if(!folders.length){el.innerHTML='<div class="empty"><div class="empty-icon">&#128506;</div><h3>'+s('nof')+'</h3><p>'+s('nofd')+'</p></div>';return;}
+  var h='';
+  folders.forEach(function(f){
+    var days=f.days||[],rt=f.tracks||[];
+    var tot=rt.length+days.reduce(function(a,d){return a+(d.tracks||[]).length;},0);
+    var meta=(days.length?days.length+' '+s('sec')+' · ':'')+trN(tot);
+    h+='<div class="fc'+(f._open?' open':'')+'"><div class="fh" onclick="toggleF(\''+f.id+'\')">';
+    h+='<span class="farr">&#9658;</span><span class="ficon">&#128193;</span>';
+    h+='<div class="finfo"><div class="fname">'+esc(f.name)+'</div><div class="fmeta">'+meta+'</div></div>';
+    if(isAdmin){
+      h+='<div class="fadm" onclick="event.stopPropagation()">';
+      h+='<button class="sb" title="'+s('ad')+'" onclick="openDayModal(\''+f.id+'\',null)">&#128197;</button>';
+      h+='<button class="sb" onclick="openUpload(\''+f.id+'\',null)">&#65291;</button>';
+      h+='<button class="sb" onclick="openFolderModal(\''+f.id+'\')">&#9999;</button>';
+      h+='<button class="sb del" onclick="delFolder(\''+f.id+'\')">&#10005;</button>';
+      h+='</div>';
+    }
+    h+='</div>';
+    if(f._open){
+      h+='<div class="fbody">';
+      days.forEach(function(d){
+        var dt=d.tracks||[];
+        var pill=d.num?'<span class="dpill">'+s('day')+d.num+'</span>':'';
+        h+='<div class="dc'+(d._open?' open':'')+'"><div class="dh" onclick="toggleD(\''+f.id+'\',\''+d.id+'\')">';
+        h+='<span class="darr">&#9658;</span>'+pill+'<span class="dname">'+esc(d.name)+'</span><span class="dmeta">'+trN(dt.length)+'</span>';
+        if(isAdmin){
+          h+='<div class="dadm" onclick="event.stopPropagation()">';
+          h+='<button class="sb" onclick="openUpload(\''+f.id+'\',\''+d.id+'\')">&#65291;</button>';
+          h+='<button class="sb" onclick="openDayModal(\''+f.id+'\',\''+d.id+'\')">&#9999;</button>';
+          h+='<button class="sb del" onclick="delDay(\''+f.id+'\',\''+d.id+'\')">&#10005;</button>';
+          h+='</div>';
+        }
+        h+='</div>';
+        if(d._open){
+          h+='<div class="tlist">';
+          if(!dt.length)h+='<div style="padding:6px 4px;font-size:12px;color:var(--txt3)">'+s('not')+'</div>';
+          else dt.forEach(function(tr,i){h+=renderTrack(tr,i,f.id,d.id);});
+          h+='</div>';
+        }
+        h+='</div>';
+      });
+      if(rt.length){
+        if(days.length)h+='<div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);padding:8px 4px 4px">'+s('ns')+'</div>';
+        h+='<div class="tlist">';
+        rt.forEach(function(tr,i){h+=renderTrack(tr,i,f.id,null);});
+        h+='</div>';
+      }
+      h+='</div>';
+    }
+    h+='</div>';
+  });
+  el.innerHTML=h;
+}
+function renderTrack(tr,i,fid,did){
+  var pl=curFid===fid&&curDid===did&&curIdx===i&&playing;
+  var dp=did?("'"+did+"'"):'null';
+  var thumb=pl?'<div class="eq"><span></span><span></span><span></span></div>':'&#127911;';
+  var h='<div class="ti'+(pl?' playing':'')+'" onclick="playTrack(\''+fid+'\','+dp+','+i+')">';
+  h+='<span class="tnum">'+(i+1)+'</span><div class="tthumb">'+thumb+'</div>';
+  h+='<span class="tname">'+esc(tr.name)+'</span><span class="tdur">'+(tr.duration||'')+'</span>';
+  if(isAdmin){
+    h+='<button class="tdel" onclick="event.stopPropagation();openMove(\''+fid+'\','+dp+',\''+tr.id+'\')" title="Move">&#8644;</button>';
+    h+='<button class="tdel" onclick="event.stopPropagation();delTrack(\''+fid+'\','+dp+',\''+tr.id+'\')">&#10005;</button>';
+  }
+  return h+'</div>';
+}
+function toggleF(id){var f=byId(folders,id);if(f){f._open=!f._open;renderLib();}}
+function toggleD(fid,did){var f=byId(folders,fid);if(!f)return;var d=byId(f.days||[],did);if(d){d._open=!d._open;renderLib();}}
+function renderInfo(){document.getElementById('main').innerHTML='<div style="padding:8px 0"><div style="font-family:\'Cormorant Garamond\',serif;font-size:26px;font-style:italic;color:var(--gold2);margin-bottom:16px">'+s('ititle')+'</div>'+s('ibody')+'</div>';}
+
+// ── AUDIO ─────────────────────────────────────────────────────
+var aud=document.getElementById('aud');
+var currentBlobUrl=null;
+
+function getList(fid,did){var f=byId(folders,fid);if(!f)return[];if(did){var d=byId(f.days||[],did);return d?d.tracks||[]:[]; }return f.tracks||[];}
+
+function playTrack(fid,did,idx){
+  var list=getList(fid,did);if(!list[idx])return;
+  curFid=fid;curDid=did;curIdx=idx;curList=list;
+  var tr=list[idx];var f=byId(folders,fid);
+  var d=did?byId(f?f.days||[]:[], did):null;
+
+  // Update UI immediately
+  document.getElementById('ptitle').textContent=tr.name;
+  var sub=d?((d.num?s('day')+d.num+' \u2014 ':'')+d.name):(f?f.name:'');
+  document.getElementById('psub').textContent='\uD83D\uDCC1 '+sub;
+  document.getElementById('psub').className='psub on';
+  document.getElementById('playbtn').innerHTML='&#9646;&#9646;';
+
+  // Revoke previous blob URL to free memory
+  if(currentBlobUrl){URL.revokeObjectURL(currentBlobUrl);currentBlobUrl=null;}
+
+  if(tr.blobId){
+    // Locally uploaded file — get from IndexedDB
+    blobGet(tr.blobId).then(function(blob){
+      if(!blob){toast('File not found');return;}
+      currentBlobUrl=URL.createObjectURL(blob);
+      aud.src=currentBlobUrl;
+      aud.load();
+      aud.play().catch(function(e){console.warn('play error:',e);});
+      playing=true;renderLib();
+    });
+  } else if(tr.url){
+    // Drive URL — fetch as blob first (fixes Android CORS/redirect issues)
+    var loadingId=tr.id;
+    toast(lang==='ru'?'Загрузка...':'Loading...');
+    fetch(tr.url)
+      .then(function(r){
+        if(!r.ok) throw new Error('HTTP '+r.status);
+        return r.blob();
+      })
+      .then(function(blob){
+        if(curIdx!==idx||curFid!==fid){return;} // user tapped something else
+        currentBlobUrl=URL.createObjectURL(blob);
+        aud.src=currentBlobUrl;
+        aud.load();
+        aud.play().catch(function(e){console.warn('play error:',e);});
+        playing=true;renderLib();
+      })
+      .catch(function(e){
+        console.warn('Fetch failed, trying direct src:',e);
+        // Fallback: try setting src directly (works on desktop, may work on some Android)
+        aud.src=tr.url;
+        aud.load();
+        aud.play().catch(function(e2){
+          console.error('Direct play also failed:',e2);
+          toast('Playback error: '+e2.message);
+        });
+        playing=true;renderLib();
+      });
+  } else {
+    toast('No audio source');
+    return;
+  }
+  renderLib();
+}
+function togglePlay(){
+  if(curIdx<0){var f=folders.find(function(x){return(x.days&&x.days.some(function(d){return(d.tracks||[]).length;}))||(x.tracks||[]).length;});if(f){if((f.days||[]).length&&(f.days[0].tracks||[]).length){playTrack(f.id,f.days[0].id,0);return;}if((f.tracks||[]).length){playTrack(f.id,null,0);return;}}return;}
+  if(aud.paused){aud.play();playing=true;}else{aud.pause();playing=false;}
+  document.getElementById('playbtn').innerHTML=playing?'&#9646;&#9646;':'&#9654;';renderLib();
+}
+function skip(d){if(!curList.length)return;playTrack(curFid,curDid,(curIdx+d+curList.length)%curList.length);}
+function seek(e){if(!aud.duration)return;var r=e.currentTarget.getBoundingClientRect();aud.currentTime=((e.clientX-r.left)/r.width)*aud.duration;}
+aud.addEventListener('timeupdate',function(){var p=aud.duration?(aud.currentTime/aud.duration*100):0;document.getElementById('progf').style.width=p+'%';document.getElementById('tcur').textContent=fmt(aud.currentTime);document.getElementById('ttot').textContent=fmt(aud.duration);});
+aud.addEventListener('ended',function(){skip(1);});
+aud.addEventListener('play',function(){playing=true;document.getElementById('playbtn').innerHTML='&#9646;&#9646;';renderLib();});
+aud.addEventListener('pause',function(){playing=false;document.getElementById('playbtn').innerHTML='&#9654;';renderLib();});
+
+// ── GOOGLE AUTH ───────────────────────────────────────────────
+function openAdmin(){if(isAdmin){openAdminPanel();return;}openOv('ovLogin');}
+function googleLogin(){
+  if(typeof google==='undefined'||!google.accounts){toast('Google loading, try again');return;}
+  google.accounts.oauth2.initTokenClient({
+    client_id:CLIENT_ID,
+    scope:'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile',
+    callback:function(resp){
+      if(resp.error){toast('Login error: '+resp.error);return;}
+      gToken=resp.access_token;
+      fetch('https://www.googleapis.com/oauth2/v2/userinfo',{headers:{Authorization:'Bearer '+gToken}})
+        .then(function(r){return r.json();})
+        .then(function(u){gUser=u;isAdmin=true;closeOv('ovLogin');renderLib();openAdminPanel();});
+    }
+  }).requestAccessToken();
+}
+function logout(){if(dirty&&confirm(lang==='ru'?'Опубликовать изменения?':'Publish changes?')){doPublish().then(_logout);return;}_logout();}
+function _logout(){isAdmin=false;gToken=null;gUser=null;dirty=false;refreshPbar();closeOv('ovAdmin');renderLib();}
+
+// ── ADMIN PANEL ───────────────────────────────────────────────
+function openAdminPanel(){
+  if(gUser){var av=document.getElementById('gavatar');if(gUser.picture){av.src=gUser.picture;av.style.display='block';}document.getElementById('gname').textContent=gUser.name||'';}
+  document.getElementById('inDriveFolder').value=driveCfg.folderId||'';
+  document.getElementById('inDriveKey').value=driveCfg.apiKey||'';
+  document.getElementById('driveStatus').textContent='';
+  renderAdmFolders();
+  openOv('ovAdmin');
+}
+function saveDriveCfg(){
+  driveCfg.folderId=document.getElementById('inDriveFolder').value.trim();
+  driveCfg.apiKey=document.getElementById('inDriveKey').value.trim();
+  localStorage.setItem('ag_drive',JSON.stringify(driveCfg));
+  toast(s('saved'));
+}
+function renderAdmFolders(){
+  var el=document.getElementById('admfolders');
+  if(!folders.length){el.innerHTML='<div style="font-size:13px;color:var(--txt3);padding:4px 0">'+s('nof')+'</div>';return;}
+  el.innerHTML=folders.map(function(f){
+    var tc=(f.tracks||[]).length+(f.days||[]).reduce(function(a,d){return a+(d.tracks||[]).length;},0);
+    return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">'+
+      '<span>&#128193;</span><span style="flex:1;font-size:13px">'+esc(f.name)+'</span>'+
+      '<span style="font-size:11px;color:var(--txt3)">'+(f.days||[]).length+'s &middot; '+trN(tc)+'</span>'+
+      '<button class="sb" onclick="openUpload(\''+f.id+'\',null);closeOv(\'ovAdmin\')">&#65291;</button>'+
+      '<button class="sb" onclick="openFolderModal(\''+f.id+'\');closeOv(\'ovAdmin\')">&#9999;</button>'+
+      '<button class="sb del" onclick="delFolder(\''+f.id+'\');renderAdmFolders()">&#10005;</button>'+
+      '</div>';
+  }).join('');
+}
+
+// ── DRIVE: SYNC (reads subfolders + audio files) ─────────────
+function syncFromDrive(){
+  var folderId=driveCfg.folderId, apiKey=driveCfg.apiKey;
+  if(!folderId||!apiKey){toast('Enter Drive folder ID and API key first');return;}
+  var st=document.getElementById('driveStatus');
+  var btn=document.getElementById('bDriveSync');
+  st.innerHTML='<span class="spin"></span>'+s('syncing');
+  st.style.color='var(--txt3)';
+  btn.disabled=true;
+
+  // Step 1: list everything in root folder (no mimeType filter — avoids the issue)
+  driveList(folderId, apiKey, null).then(function(allItems){
+    console.log('[Drive] Root items:', allItems.length, allItems.map(function(f){return f.name+'('+f.mimeType+')';}).join(', '));
+
+    var subFolders = allItems.filter(function(f){return f.mimeType==='application/vnd.google-apps.folder';});
+    var rootAudio  = allItems.filter(function(f){return isAudio(f.mimeType);});
+
+    console.log('[Drive] Subfolders:', subFolders.length, 'Root audio:', rootAudio.length);
+
+    // Step 2: fetch files inside each subfolder
+    var proms = subFolders.map(function(sf){
+      return driveList(sf.id, apiKey, null).then(function(items){
+        var audio=items.filter(function(f){return isAudio(f.mimeType);});
+        console.log('[Drive] Subfolder "'+sf.name+'" files:', items.length, 'audio:', audio.length);
+        return {id:sf.id, name:sf.name, files:audio};
+      });
+    });
+
+    return Promise.all(proms).then(function(groups){
+      // Add root audio as "General" folder if any
+      if(rootAudio.length) groups.unshift({id:'__root__', name:lang==='ru'?'Общие':'General', files:rootAudio});
+
+      var added=0, updated=0;
+      groups.forEach(function(g){
+        if(!g.files.length) return;
+        var existing = folders.find(function(f){
+          return f.driveId===g.id || f.id==='dr_'+g.id || f.name===g.name;
+        });
+        if(!existing){
+          // New folder from Drive
+          var newFolder = {
+            id:'dr_'+g.id, driveId:g.id, name:g.name, days:[], _open:false,
+            tracks: g.files.map(function(f){
+              return {id:f.id, name:cleanName(f.name), url:GD+'/'+f.id+'?alt=media&key='+apiKey, duration:''};
+            })
+          };
+          folders.push(newFolder);
+          added++;
+        } else {
+          // Existing folder — update/add missing track URLs
+          existing.driveId = g.id;
+          g.files.forEach(function(df){
+            var tname=cleanName(df.name);
+            // Search in root tracks and all day tracks
+            var allTracks=(existing.tracks||[]).concat(
+              (existing.days||[]).reduce(function(a,d){return a.concat(d.tracks||[]);},[]));
+            var found=allTracks.find(function(t){
+              return t.name.toLowerCase()===tname.toLowerCase()||t.id===df.id;
+            });
+            if(found){
+              if(!found.url){found.url=GD+'/'+df.id+'?alt=media&key='+apiKey;updated++;}
+            } else {
+              // Track not in structure yet — add to folder root
+              if(!existing.tracks)existing.tracks=[];
+              existing.tracks.push({id:df.id, name:tname, url:GD+'/'+df.id+'?alt=media&key='+apiKey, duration:''});
+              updated++;
+            }
+          });
+        }
+      });
+
+      st.innerHTML='&#9989; '+s('syncOk')+' ('+groups.reduce(function(a,g){return a+g.files.length;},0)+' files)';
+      st.style.color='var(--green)';
+      btn.disabled=false;
+      if(added+updated>0){
+        markDirty();saveLocalCache();renderLib();renderAdmFolders();
+        toast(s('syncOk'));
+      } else {
+        toast(lang==='ru'?'Нет новых файлов':'No new files found');
+        renderLib();renderAdmFolders();
+      }
+    });
+  }).catch(function(e){
+    console.error('[Drive] Sync error:', e);
+    st.innerHTML='&#10060; '+e.message;
+    st.style.color='var(--red)';
+    btn.disabled=false;
+    toast(s('syncErr')+': '+e.message);
+  });
+}
+
+function driveList(folderId, apiKey, pageToken){
+  // List ALL files in a folder — no mimeType filter to avoid missing files
+  var q=encodeURIComponent("'"+folderId+"' in parents and trashed=false");
+  var url=GD+'?q='+q+'&fields=files(id,name,mimeType)&pageSize=1000&key='+apiKey;
+  if(pageToken) url+='&pageToken='+encodeURIComponent(pageToken);
+  return fetch(url).then(function(r){
+    if(!r.ok) throw new Error('HTTP '+r.status+' — check folder is shared publicly and API key is valid');
+    return r.json();
+  }).then(function(data){
+    if(data.error) throw new Error(data.error.message+' (code '+data.error.code+')');
+    var files=data.files||[];
+    if(data.nextPageToken){
+      return driveList(folderId, apiKey, data.nextPageToken).then(function(more){return files.concat(more);});
+    }
+    return files;
+  });
+}
+
+function isAudio(mimeType){
+  if(!mimeType) return false;
+  // Google Drive audio types
+  var audioTypes=['audio/','video/mp4','video/quicktime','video/x-m4v'];
+  return audioTypes.some(function(t){return mimeType.indexOf(t)===0||mimeType===t;});
+}
+function cleanName(name){return name.replace(/\.[^.]+$/,'');}
+
+// ── DRIVE: WRITE STRUCTURE (publish) ─────────────────────────
+function findStructFile(){
+  if(!gToken)return Promise.resolve(null);
+  var q=encodeURIComponent("'"+driveCfg.folderId+"' in parents and name='"+STRUCT_NAME+"' and trashed=false");
+  return fetch(GD+'?q='+q+'&fields=files(id)',{headers:{Authorization:'Bearer '+gToken}})
+    .then(function(r){return r.json();})
+    .then(function(d){var f=d.files||[];return f.length?f[0].id:null;});
+}
+function doPublish(){
+  if(!gToken){toast('Not logged in');return Promise.resolve();}
+  var btn=document.getElementById('pbbtn');btn.disabled=true;btn.innerHTML='<span class="spin"></span>';
+  var clean=folders.map(function(f){
+    return{id:f.id,name:f.name,driveId:f.driveId||null,
+      days:(f.days||[]).map(function(d){return{id:d.id,num:d.num||'',name:d.name,tracks:(d.tracks||[]).map(ct)};}),
+      tracks:(f.tracks||[]).map(ct)};
+  });
+  function ct(t){return{id:t.id,name:t.name,url:t.url||null,duration:t.duration||''};}
+  var body=JSON.stringify({folders:clean,updatedAt:new Date().toISOString(),driveCfg:{folderId:driveCfg.folderId}});
+  return findStructFile().then(function(fid){
+    if(fid) return fetch(GU+'/'+fid+'?uploadType=media',{method:'PATCH',headers:{Authorization:'Bearer '+gToken,'Content-Type':'application/json'},body:body});
+    return fetch(GD,{method:'POST',headers:{Authorization:'Bearer '+gToken,'Content-Type':'application/json'},
+      body:JSON.stringify({name:STRUCT_NAME,parents:[driveCfg.folderId],mimeType:'application/json'})})
+      .then(function(r){return r.json();})
+      .then(function(m){return fetch(GU+'/'+m.id+'?uploadType=media',{method:'PATCH',headers:{Authorization:'Bearer '+gToken,'Content-Type':'application/json'},body:body});});
+  }).then(function(){
+    dirty=false;refreshPbar();saveLocalCache();toast(s('published'));
+    btn.disabled=false;btn.innerHTML='\u2601 '+(lang==='ru'?'\u041e\u043f\u0443\u0431\u043b\u0438\u043a\u043e\u0432\u0430\u0442\u044c':'Publish');
+  }).catch(function(e){
+    console.error('publish:',e);toast(s('pubfail'));
+    btn.disabled=false;btn.innerHTML='\u2601 '+(lang==='ru'?'\u041e\u043f\u0443\u0431\u043b\u0438\u043a\u043e\u0432\u0430\u0442\u044c':'Publish');
+  });
+}
+
+// ── LOAD STRUCTURE (on app open, for all users) ───────────────
+var CACHE_KEY = 'ag_folders_cache';
+
+function saveLocalCache(){
+  try{
+    var clean=folders.map(function(f){
+      return{id:f.id,name:f.name,driveId:f.driveId||null,_open:f._open||false,
+        days:(f.days||[]).map(function(d){return{id:d.id,num:d.num||'',name:d.name,_open:d._open||false,tracks:(d.tracks||[]).map(ct)};}),
+        tracks:(f.tracks||[]).map(ct)};
+    });
+    function ct(t){return{id:t.id,name:t.name,url:t.url||null,duration:t.duration||'',blobId:t.blobId||null};}
+    localStorage.setItem(CACHE_KEY, JSON.stringify({folders:clean,savedAt:Date.now()}));
+  }catch(e){console.warn('Cache save failed:',e);}
+}
+
+function loadLocalCache(){
+  try{
+    var raw=localStorage.getItem(CACHE_KEY);
+    if(!raw) return false;
+    var data=JSON.parse(raw);
+    if(data&&data.folders&&data.folders.length){
+      folders=data.folders;
+      return true;
+    }
+  }catch(e){console.warn('Cache load failed:',e);}
+  return false;
+}
+
+function loadStructure(){
+  // 1. Load from local cache instantly (no blank screen)
+  if(loadLocalCache()){
+    renderLib();
+  }
+  // 2. Then sync from Drive in background to get latest
+  var folderId=driveCfg.folderId, apiKey=driveCfg.apiKey;
+  if(!folderId||!apiKey) return;
+  var q=encodeURIComponent("'"+folderId+"' in parents and name='"+STRUCT_NAME+"' and trashed=false");
+  fetch(GD+'?q='+q+'&fields=files(id)&key='+apiKey)
+    .then(function(r){
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.json();
+    })
+    .then(function(data){
+      if(!data.files||!data.files.length) return null;
+      return fetch(GD+'/'+data.files[0].id+'?alt=media&key='+apiKey)
+        .then(function(r){
+          if(!r.ok) throw new Error('HTTP '+r.status);
+          return r.json();
+        });
+    })
+    .then(function(st){
+      if(!st||!st.folders) return;
+      if(st.driveCfg&&st.driveCfg.folderId&&!localStorage.getItem('ag_drive')){
+        driveCfg.folderId=st.driveCfg.folderId;
+      }
+      folders=st.folders;
+      saveLocalCache(); // update cache with fresh Drive data
+      renderLib();
+    })
+    .catch(function(e){
+      console.log('Drive structure load failed (using cache):',e.message);
+      // Don't clear folders — keep whatever cache had
+    });
+}
+
+function markDirty(){dirty=true;saveLocalCache();refreshPbar();}
+function refreshPbar(){document.getElementById('pbar').classList.toggle('hide',!isAdmin||!dirty);}
+
+// ── FOLDERS ───────────────────────────────────────────────────
+function openFolderModal(id){editFid=id;document.getElementById('fmtitle').textContent=id?s('fte'):s('ftn');var f=id?byId(folders,id):null;document.getElementById('finput').value=f?f.name:'';openOv('ovFolder');setTimeout(function(){document.getElementById('finput').focus();},300);}
+function saveFolder(){var name=document.getElementById('finput').value.trim();if(!name)return;if(editFid){var f=byId(folders,editFid);if(f)f.name=name;}else folders.push({id:uid(),name:name,days:[],tracks:[],_open:false});closeOv('ovFolder');toast(s('saved'));markDirty();renderLib();renderAdmFolders();}
+function delFolder(id){if(!confirm(lang==='ru'?'Удалить папку?':'Delete folder?'))return;var i=folders.findIndex(function(x){return x.id===id;});if(i>=0)folders.splice(i,1);toast(s('deleted'));markDirty();renderLib();renderAdmFolders();}
+
+// ── DAYS ──────────────────────────────────────────────────────
+function openDayModal(fid,did){editDfid=fid;editDid=did;document.getElementById('dmtitle').textContent=did?s('dte'):s('dtn');var f=byId(folders,fid);var d=did&&f?byId(f.days||[],did):null;document.getElementById('dnuminput').value=d?(d.num||''):'';document.getElementById('dnameinput').value=d?d.name:'';openOv('ovDay');setTimeout(function(){document.getElementById('dnameinput').focus();},300);}
+function saveDay(){var num=document.getElementById('dnuminput').value.trim();var name=document.getElementById('dnameinput').value.trim();if(!name)return;var f=byId(folders,editDfid);if(!f)return;if(!f.days)f.days=[];if(editDid){var d=byId(f.days,editDid);if(d){d.num=num;d.name=name;}}else f.days.push({id:uid(),num:num,name:name,tracks:[],_open:false});closeOv('ovDay');toast(s('saved'));markDirty();renderLib();}
+function delDay(fid,did){if(!confirm(lang==='ru'?'Удалить раздел?':'Delete section?'))return;var f=byId(folders,fid);if(!f)return;var i=(f.days||[]).findIndex(function(x){return x.id===did;});if(i>=0)f.days.splice(i,1);toast(s('deleted'));markDirty();renderLib();}
+
+// ── UPLOAD ────────────────────────────────────────────────────
+function openUpload(fid,did){
+  upFid=fid;upDid=did;pending=[];
+  var f=byId(folders,fid);
+  document.getElementById('utarget').textContent='\uD83D\uDCC1 '+(f?f.name:'');
+  document.getElementById('uqueue').innerHTML='';document.getElementById('uprog').style.display='none';
+  document.getElementById('ufile').value='';document.getElementById('umconfirm').disabled=false;
+  var days=f?f.days||[]:[];
+  var sel=document.getElementById('udaysel'),chips=document.getElementById('udaychips');
+  if(days.length){sel.style.display='block';var h='<div class="chip'+((!did)?' on':'')+'" onclick="selUpDay(null,this)">'+s('ns')+'</div>';days.forEach(function(d){var lbl=(d.num?s('day')+d.num+' \u2014 ':'')+d.name;h+='<div class="chip'+(did===d.id?' on':'')+'" onclick="selUpDay(\''+d.id+'\',this)">'+esc(lbl)+'</div>';});chips.innerHTML=h;}
+  else{sel.style.display='none';}
+  openOv('ovUpload');
+}
+function selUpDay(did,el){upDid=did;document.querySelectorAll('#udaychips .chip').forEach(function(c){c.classList.remove('on');});el.classList.add('on');}
+function filesChosen(e){pending=Array.from(e.target.files);renderQueue();}
+function renderQueue(){document.getElementById('uqueue').innerHTML=pending.map(function(f,i){return'<div class="fqi"><span class="fqn">'+(i+1)+'</span><span class="fqname">'+esc(f.name.replace(/\.[^.]+$/,''))+'</span><button class="fqrm" onclick="pending.splice('+i+',1);renderQueue()">&#10005;</button></div>';}).join('');}
+function confirmUpload(){
+  if(!pending.length)return;
+  var f=byId(folders,upFid);if(!f)return;
+  var arr;if(upDid){var d=byId(f.days||[],upDid);if(!d)return;if(!d.tracks)d.tracks=[];arr=d.tracks;}else{if(!f.tracks)f.tracks=[];arr=f.tracks;}
+  var prog=document.getElementById('uprog');prog.style.display='block';document.getElementById('umconfirm').disabled=true;
+  var i=0;
+  function next(){if(i>=pending.length){prog.style.display='none';document.getElementById('umconfirm').disabled=false;closeOv('ovUpload');toast(s('uploaded'));markDirty();renderLib();renderAdmFolders();return;}
+    var file=pending[i];prog.innerHTML='<span class="spin"></span>'+s('uploading')+' '+(i+1)+'/'+pending.length+': '+esc(file.name);
+    var bid=uid();blobSave(bid,file).then(function(){return audioDur(file);}).then(function(dur){arr.push({id:uid(),blobId:bid,name:file.name.replace(/\.[^.]+$/,''),duration:fmt(dur)});i++;next();});}
+  next();
+}
+function audioDur(file){return new Promise(function(res){var a=new Audio(),url=URL.createObjectURL(file);a.onloadedmetadata=function(){URL.revokeObjectURL(url);res(a.duration);};a.onerror=function(){res(0);};a.src=url;});}
+
+// ── DELETE / MOVE ─────────────────────────────────────────────
+function delTrack(fid,did,tid){var f=byId(folders,fid);if(!f)return;var arr=did?(byId(f.days||[],did)||{}).tracks||[]:f.tracks||[];var i=arr.findIndex(function(t){return t.id===tid;});if(i>=0){var tr=arr[i];if(tr.blobId)blobDel(tr.blobId);arr.splice(i,1);}toast(s('deleted'));markDirty();renderLib();}
+function openMove(fid,did,tid){var f=byId(folders,fid);if(!f)return;var arr=did?(byId(f.days||[],did)||{}).tracks||[]:f.tracks||[];var tr=arr.find(function(t){return t.id===tid;});if(!tr)return;mvInfo={fid:fid,did:did,tid:tid};mvTarget=undefined;document.getElementById('mmtrack').textContent='\uD83C\uDFB5 '+tr.name;var h='<div class="mopt" onclick="selMove(null,this)"><span>\uD83D\uDCC2</span><span>'+s('ns')+'</span></div>';(f.days||[]).forEach(function(d){var lbl=(d.num?s('day')+d.num+' \u2014 ':'')+d.name;var cur=did===d.id?' <span style="font-size:10px;color:var(--txt3)">'+s('cur')+'</span>':'';h+='<div class="mopt" onclick="selMove(\''+d.id+'\',this)"><span>\uD83D\uDCC5</span><span>'+esc(lbl)+cur+'</span></div>';});document.getElementById('mmopts').innerHTML=h;openOv('ovMove');}
+function selMove(did,el){mvTarget=did;document.querySelectorAll('#mmopts .mopt').forEach(function(e){e.classList.remove('on');});el.classList.add('on');}
+function confirmMove(){if(mvTarget===undefined)return;var f=byId(folders,mvInfo.fid);if(!f)return;var sa=mvInfo.did?(byId(f.days||[],mvInfo.did)||{}).tracks||[]:f.tracks||[];var ti=sa.findIndex(function(t){return t.id===mvInfo.tid;});if(ti<0)return;var tr=sa.splice(ti,1)[0];var da;if(mvTarget){var dst=byId(f.days||[],mvTarget);if(!dst)return;if(!dst.tracks)dst.tracks=[];da=dst.tracks;}else{if(!f.tracks)f.tracks=[];da=f.tracks;}da.push(tr);closeOv('ovMove');toast(s('moved'));markDirty();renderLib();}
+
+// ── UTILS ─────────────────────────────────────────────────────
+function byId(arr,id){return arr.find(function(x){return x.id===id;});}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
+function esc(v){return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function fmt(v){if(!v||isNaN(v))return'0:00';return Math.floor(v/60)+':'+('0'+Math.floor(v%60)).slice(-2);}
+function openOv(id){document.getElementById(id).classList.add('show');}
+function closeOv(id){document.getElementById(id).classList.remove('show');}
+document.querySelectorAll('.ov').forEach(function(o){o.addEventListener('click',function(e){if(e.target===o)closeOv(o.id);});});
+var _tt;
+function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(function(){el.classList.remove('show');},2800);}
+
+// ── INIT ──────────────────────────────────────────────────────
+openDB().then(function(){
+  applyLang();
+  render();
+  setTimeout(loadStructure, 500);
+});
+</script>
+</body>
+</html>
