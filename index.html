@@ -315,7 +315,9 @@ let uploadFolderId = null;
 let pendingFiles = [];
 
 let folders = JSON.parse(localStorage.getItem('ag_folders') || '[]');
-let driveConfig = JSON.parse(localStorage.getItem('ag_drive') || '{}');
+// Default Drive config — everyone auto-connects to this folder
+const DEFAULT_DRIVE = { folderId: '1CMJ1JtSTqE9A_TXSChZOG-rf6vFl954X', apiKey: 'AIzaSyBsZbfhcO8orXPsZDJ1jZ_xyRmpu-0FT70' };
+let driveConfig = Object.assign({}, DEFAULT_DRIVE, JSON.parse(localStorage.getItem('ag_drive') || '{}'));
 const ADMIN_PASS_KEY = 'ag_adminpass';
 
 // ─── IDB ─────────────────────────────────────────────────────
