@@ -492,22 +492,69 @@ function renderInfo(){document.getElementById('main').innerHTML='<div style="pad
 
 // ── AUDIO ─────────────────────────────────────────────────────
 var aud=document.getElementById('aud');
+var currentBlobUrl=null;
+
 function getList(fid,did){var f=byId(folders,fid);if(!f)return[];if(did){var d=byId(f.days||[],did);return d?d.tracks||[]:[]; }return f.tracks||[];}
+
 function playTrack(fid,did,idx){
   var list=getList(fid,did);if(!list[idx])return;
   curFid=fid;curDid=did;curIdx=idx;curList=list;
   var tr=list[idx];var f=byId(folders,fid);
   var d=did?byId(f?f.days||[]:[], did):null;
-  (tr.blobId?blobGet(tr.blobId):Promise.resolve(null)).then(function(blob){
-    var src=blob?URL.createObjectURL(blob):(tr.url||null);
-    if(!src){toast('No audio source');return;}
-    aud.src=src;aud.play();playing=true;
-    document.getElementById('ptitle').textContent=tr.name;
-    var sub=d?((d.num?s('day')+d.num+' \u2014 ':'')+d.name):(f?f.name:'');
-    document.getElementById('psub').textContent='\uD83D\uDCC1 '+sub;
-    document.getElementById('psub').className='psub on';
-    renderLib();
-  });
+
+  // Update UI immediately
+  document.getElementById('ptitle').textContent=tr.name;
+  var sub=d?((d.num?s('day')+d.num+' \u2014 ':'')+d.name):(f?f.name:'');
+  document.getElementById('psub').textContent='\uD83D\uDCC1 '+sub;
+  document.getElementById('psub').className='psub on';
+  document.getElementById('playbtn').innerHTML='&#9646;&#9646;';
+
+  // Revoke previous blob URL to free memory
+  if(currentBlobUrl){URL.revokeObjectURL(currentBlobUrl);currentBlobUrl=null;}
+
+  if(tr.blobId){
+    // Locally uploaded file — get from IndexedDB
+    blobGet(tr.blobId).then(function(blob){
+      if(!blob){toast('File not found');return;}
+      currentBlobUrl=URL.createObjectURL(blob);
+      aud.src=currentBlobUrl;
+      aud.load();
+      aud.play().catch(function(e){console.warn('play error:',e);});
+      playing=true;renderLib();
+    });
+  } else if(tr.url){
+    // Drive URL — fetch as blob first (fixes Android CORS/redirect issues)
+    var loadingId=tr.id;
+    toast(lang==='ru'?'Загрузка...':'Loading...');
+    fetch(tr.url)
+      .then(function(r){
+        if(!r.ok) throw new Error('HTTP '+r.status);
+        return r.blob();
+      })
+      .then(function(blob){
+        if(curIdx!==idx||curFid!==fid){return;} // user tapped something else
+        currentBlobUrl=URL.createObjectURL(blob);
+        aud.src=currentBlobUrl;
+        aud.load();
+        aud.play().catch(function(e){console.warn('play error:',e);});
+        playing=true;renderLib();
+      })
+      .catch(function(e){
+        console.warn('Fetch failed, trying direct src:',e);
+        // Fallback: try setting src directly (works on desktop, may work on some Android)
+        aud.src=tr.url;
+        aud.load();
+        aud.play().catch(function(e2){
+          console.error('Direct play also failed:',e2);
+          toast('Playback error: '+e2.message);
+        });
+        playing=true;renderLib();
+      });
+  } else {
+    toast('No audio source');
+    return;
+  }
+  renderLib();
 }
 function togglePlay(){
   if(curIdx<0){var f=folders.find(function(x){return(x.days&&x.days.some(function(d){return(d.tracks||[]).length;}))||(x.tracks||[]).length;});if(f){if((f.days||[]).length&&(f.days[0].tracks||[]).length){playTrack(f.id,f.days[0].id,0);return;}if((f.tracks||[]).length){playTrack(f.id,null,0);return;}}return;}
