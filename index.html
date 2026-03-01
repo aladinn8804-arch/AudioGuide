@@ -221,7 +221,10 @@ main::-webkit-scrollbar-thumb{background:rgba(212,168,83,.15);border-radius:2px}
     <div class="divider"></div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
       <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold)" id="mfl">FOLDERS</div>
-      <button class="ibtn" id="mfnew" onclick="openFolderModal(null)">+ New</button>
+      <div style="display:flex;gap:6px">
+        <button class="ibtn" id="msync" onclick="syncDriveFolders()" title="Sync from Drive">&#8635; Drive</button>
+        <button class="ibtn" id="mfnew" onclick="openFolderModal(null)">+ New</button>
+      </div>
     </div>
     <div id="admfolders"></div>
     <div class="divider"></div>
@@ -612,10 +615,17 @@ function checkDriveStatus(){
   var box=document.getElementById('drivebox');
   box.innerHTML='<span class="spin"></span>';
   box.style.color='var(--txt3)';
-  findStructFile().then(function(fid){
-    box.innerHTML=fid?s('drOk'):s('drEmpty');
-    box.style.color=fid?'var(--green)':'var(--txt2)';
-  }).catch(function(){box.innerHTML=s('drErr');box.style.color='var(--red)';});
+  // Check with public key first (structure file is readable by anyone)
+  var q=encodeURIComponent("'"+ROOT_ID+"' in parents and name='"+STRUCT_NAME+"' and trashed=false");
+  fetch(GDrive+'?q='+q+'&fields=files(id)&key='+API_KEY)
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.error){box.innerHTML='&#10060; '+data.error.message;box.style.color='var(--red)';return;}
+      var has=data.files&&data.files.length>0;
+      box.innerHTML=has?s('drOk'):s('drEmpty');
+      box.style.color=has?'var(--green)':'var(--txt2)';
+    })
+    .catch(function(){box.innerHTML=s('drErr');box.style.color='var(--red)';});
 }
 function renderAdmFolders(){
   var el=document.getElementById('admfolders');
@@ -634,24 +644,38 @@ function renderAdmFolders(){
 
 // ── DRIVE: READ STRUCTURE + AUDIO FILES ──────────────────────
 function loadFromDrive(){
-  // First try to load saved structure.json
+  console.log('[Drive] Starting load from folder:', ROOT_ID);
   var q=encodeURIComponent("'"+ROOT_ID+"' in parents and name='"+STRUCT_NAME+"' and trashed=false");
-  fetch(GDrive+'?q='+q+'&fields=files(id)&key='+API_KEY)
-    .then(function(r){return r.json();})
+  return fetch(GDrive+'?q='+q+'&fields=files(id)&key='+API_KEY)
+    .then(function(r){
+      console.log('[Drive] Structure search status:', r.status);
+      if(!r.ok) throw new Error('HTTP '+r.status+' - Check: 1) Drive API enabled 2) Folder shared publicly');
+      return r.json();
+    })
     .then(function(data){
+      console.log('[Drive] Structure search result:', JSON.stringify(data));
+      if(data.error){
+        console.error('[Drive] API error:', data.error.message);
+        toast('Drive: '+data.error.message);
+        return;
+      }
       if(data.files&&data.files.length){
-        // Load structure, then inject audio URLs from Drive
+        console.log('[Drive] Found structure.json, loading...');
         return fetch(GDrive+'/'+data.files[0].id+'?alt=media&key='+API_KEY)
           .then(function(r){return r.json();})
           .then(function(struct){
+            console.log('[Drive] Structure loaded, folders:', (struct&&struct.folders)?struct.folders.length:0);
             if(struct&&struct.folders) return injectAudioUrls(struct.folders);
           });
       } else {
-        // No structure yet — load raw Drive subfolders
+        console.log('[Drive] No structure.json, loading raw folders...');
         return loadRawFolders();
       }
     })
-    .catch(function(e){console.warn('Drive load:',e);});
+    .catch(function(e){
+      console.error('[Drive] Load error:', e.message||e);
+      toast('Drive error: '+( e.message||'Check console'));
+    });
 }
 
 function injectAudioUrls(savedFolders){
@@ -702,12 +726,17 @@ function injectAudioUrls(savedFolders){
 }
 
 function loadRawFolders(){
-  // No structure.json exists yet — show Drive subfolders directly
   var q=encodeURIComponent("'"+ROOT_ID+"' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false");
   return fetch(GDrive+'?q='+q+'&fields=files(id,name,createdTime)&orderBy=createdTime&key='+API_KEY)
-    .then(function(r){return r.json();})
+    .then(function(r){
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.json();
+    })
     .then(function(data){
+      console.log('[Drive] Raw subfolders:', JSON.stringify(data));
+      if(data.error){toast('Drive: '+data.error.message);return;}
       var subs=data.files||[];
+      console.log('[Drive] Subfolder count:', subs.length);
       var proms=subs.map(function(sf){
         var aq=encodeURIComponent("'"+sf.id+"' in parents and mimeType contains 'audio/' and trashed=false");
         return fetch(GDrive+'?q='+aq+'&fields=files(id,name,createdTime)&orderBy=name&key='+API_KEY)
@@ -739,6 +768,80 @@ function loadRawFolders(){
 }
 
 // ── DRIVE: WRITE STRUCTURE ───────────────────────────────────
+function syncDriveFolders(){
+  // Fetches Drive subfolders and adds any new ones to the folders list
+  var btn=document.getElementById('msync');
+  if(btn){btn.innerHTML='<span class="spin"></span>';btn.disabled=true;}
+  var q=encodeURIComponent("'"+ROOT_ID+"' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false");
+  fetch(GDrive+'?q='+q+'&fields=files(id,name,createdTime)&orderBy=createdTime&key='+API_KEY)
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.error){toast('Drive: '+data.error.message);return Promise.reject(data.error);}
+      var subs=data.files||[];
+      console.log('[Drive] Sync found subfolders:', subs.length);
+      // Fetch audio files for each subfolder
+      var proms=subs.map(function(sf){
+        var aq=encodeURIComponent("'"+sf.id+"' in parents and mimeType contains 'audio/' and trashed=false");
+        return fetch(GDrive+'?q='+aq+'&fields=files(id,name)&orderBy=name&key='+API_KEY)
+          .then(function(r){return r.json();})
+          .then(function(fd){return{id:sf.id,name:sf.name,files:fd.files||[]};});
+      });
+      // Root audio
+      var rq=encodeURIComponent("'"+ROOT_ID+"' in parents and mimeType contains 'audio/' and trashed=false");
+      proms.push(fetch(GDrive+'?q='+rq+'&fields=files(id,name)&orderBy=name&key='+API_KEY)
+        .then(function(r){return r.json();})
+        .then(function(d){return{id:'__root__',name:lang==='ru'?'Общие':'General',files:d.files||[]};}));
+      return Promise.all(proms);
+    })
+    .then(function(groups){
+      var added=0;
+      groups.forEach(function(g){
+        if(!g.files.length)return;
+        // Check if folder already exists (by drive id or name)
+        var exists=folders.find(function(f){return f.id==='dr_'+g.id||f.name===g.name;});
+        if(!exists){
+          // New Drive folder — add it
+          folders.push({
+            id:'dr_'+g.id,name:g.name,days:[],_open:false,
+            tracks:g.files.map(function(f){
+              return{id:f.id,name:f.name.replace(/\.[^.]+$/,''),
+                     url:GDrive+'/'+f.id+'?alt=media&key='+API_KEY,duration:''};
+            })
+          });
+          added++;
+        } else {
+          // Existing folder — update/add any missing tracks
+          var tracksUpdated=0;
+          g.files.forEach(function(f){
+            var tname=f.name.replace(/\.[^.]+$/,'');
+            // Check in folder root tracks and all day tracks
+            var allTracks=(exists.tracks||[]).concat(
+              (exists.days||[]).reduce(function(a,d){return a.concat(d.tracks||[]);},[]));
+            var found=allTracks.find(function(t){return t.name.toLowerCase()===tname.toLowerCase();});
+            if(found){
+              // Update URL if missing
+              if(!found.url){found.url=GDrive+'/'+f.id+'?alt=media&key='+API_KEY;tracksUpdated++;}
+            }
+          });
+          if(tracksUpdated>0) console.log('[Drive] Updated '+tracksUpdated+' URLs in folder: '+exists.name);
+        }
+      });
+      if(btn){btn.innerHTML='&#8635; Drive';btn.disabled=false;}
+      if(added>0){
+        toast((lang==='ru'?'Добавлено папок: ':'Added folders: ')+added);
+        markDirty();renderLib();renderAdmFolders();
+      } else {
+        toast(lang==='ru'?'Нет новых папок':'No new folders found');
+        renderLib();renderAdmFolders();
+      }
+    })
+    .catch(function(e){
+      console.error('[Drive] Sync error:',e);
+      toast('Sync error: '+(e.message||'Check console'));
+      if(btn){btn.innerHTML='&#8635; Drive';btn.disabled=false;}
+    });
+}
+
 function findStructFile(){
   if(!gToken)return Promise.resolve(null);
   var q=encodeURIComponent("'"+ROOT_ID+"' in parents and name='"+STRUCT_NAME+"' and trashed=false");
