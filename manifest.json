@@ -1,0 +1,22 @@
+{
+  "name": "AudioGuide — Travel Companion",
+  "short_name": "AudioGuide",
+  "description": "Your personal audio guide for travel",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0e0e1a",
+  "theme_color": "#1a1a2e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%231a1a2e'/%3E%3Ctext y='130' x='50%25' text-anchor='middle' font-size='110'%3E🎧%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%231a1a2e'/%3E%3Ctext y='360' x='50%25' text-anchor='middle' font-size='300'%3E🎧%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

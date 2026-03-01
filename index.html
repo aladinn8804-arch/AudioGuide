@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f0f1c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="АудиоГид">
+<title>АудиоГид · AudioGuide</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0f0f1c; --bg2:#13131f; --surf:#1a1a2e; --surf2:#20203c; --surf3:#2a2a50;
+  --gold:#d4a853; --gold2:#f0c96a; --golddim:rgba(212,168,83,0.12);
+  --red:#e05c5c; --green:#5ce08a;
+  --txt:#ede8d8; --txt2:#a09880; --txt3:#5a546e;
+  --r:14px; --ph:170px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overscroll-behavior:none}
+body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--txt);
+  display:flex;flex-direction:column;align-items:center;overflow:hidden;height:100vh}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 40% at 15% 10%,rgba(212,168,83,.07) 0%,transparent 60%),
+             radial-gradient(ellipse 50% 60% at 85% 90%,rgba(80,60,160,.08) 0%,transparent 60%)}
+.app{position:relative;z-index:1;width:100%;max-width:480px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+header{flex-shrink:0;padding:44px 22px 14px;display:flex;align-items:flex-end;justify-content:space-between;
+  border-bottom:1px solid rgba(212,168,83,.12)}
+.h-left .eyebrow{font-size:10px;letter-spacing:3.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.h-left h1{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;line-height:1}
+.h-left h1 em{font-style:italic;color:var(--gold2)}
+.h-right{display:flex;gap:8px;align-items:center}
+.icon-btn{background:var(--surf);border:1px solid rgba(212,168,83,.2);border-radius:20px;
+  padding:6px 12px;color:var(--gold2);font-family:'Jost',sans-serif;font-size:11px;
+  font-weight:500;cursor:pointer;transition:all .2s;letter-spacing:.5px;white-space:nowrap}
+.icon-btn:hover{background:var(--surf2);border-color:var(--gold)}
+.tabs{flex-shrink:0;display:flex;padding:0 22px;border-bottom:1px solid rgba(255,255,255,.05)}
+.tab{flex:1;background:none;border:none;border-bottom:2px solid transparent;
+  color:var(--txt3);font-family:'Jost',sans-serif;font-size:11px;font-weight:500;
+  letter-spacing:1.2px;text-transform:uppercase;padding:11px 0;cursor:pointer;transition:all .2s}
+.tab.active{color:var(--gold2);border-bottom-color:var(--gold)}
+main{flex:1;overflow-y:auto;padding:14px 22px;padding-bottom:calc(var(--ph) + 14px)}
+main::-webkit-scrollbar{width:3px}
+main::-webkit-scrollbar-thumb{background:rgba(212,168,83,.15);border-radius:2px}
+
+/* FOLDER */
+.folder-card{background:var(--surf);border:1px solid rgba(255,255,255,.05);border-radius:var(--r);
+  margin-bottom:10px;overflow:hidden;transition:border-color .2s}
+.folder-card.open{border-color:rgba(212,168,83,.25)}
+.folder-head{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer}
+.folder-arrow{font-size:9px;color:var(--txt3);transition:transform .2s;flex-shrink:0}
+.folder-card.open .folder-arrow{transform:rotate(90deg)}
+.folder-icon{font-size:20px;flex-shrink:0}
+.folder-info{flex:1;min-width:0}
+.folder-name{font-family:'Cormorant Garamond',serif;font-size:19px;font-style:italic;
+  color:var(--txt);transition:color .2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.folder-head:hover .folder-name{color:var(--gold2)}
+.folder-meta{font-size:11px;color:var(--txt3);margin-top:1px}
+.folder-admin-btns{display:flex;gap:4px;flex-shrink:0}
+.track-list{padding:0 14px 10px}
+.track-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;
+  cursor:pointer;transition:all .15s;margin-bottom:4px;border:1px solid transparent}
+.track-item:hover{background:var(--surf2)}
+.track-item.playing{background:var(--surf2);border-color:rgba(212,168,83,.3)}
+.track-num{font-size:11px;color:var(--txt3);width:22px;text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums}
+.track-item.playing .track-num{color:var(--gold)}
+.track-thumb{width:34px;height:34px;border-radius:8px;background:var(--surf3);
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:all .2s}
+.track-item.playing .track-thumb{background:var(--gold)}
+.track-name{flex:1;min-width:0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track-dur{font-size:11px;color:var(--txt3);flex-shrink:0}
+.track-del{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:13px;
+  padding:4px 6px;border-radius:6px;transition:all .15s;flex-shrink:0}
+.track-del:hover{color:var(--red);background:rgba(224,92,92,.12)}
+.eq{display:flex;align-items:flex-end;gap:2px;height:14px}
+.eq span{width:2.5px;background:var(--bg);border-radius:2px;animation:eqA .7s ease-in-out infinite alternate}
+.eq span:nth-child(2){animation-delay:.15s}
+.eq span:nth-child(3){animation-delay:.3s}
+@keyframes eqA{0%{height:3px}100%{height:13px}}
+.sm-btn{width:28px;height:28px;border-radius:7px;background:transparent;border:none;
+  color:var(--txt3);cursor:pointer;font-size:14px;display:flex;align-items:center;
+  justify-content:center;transition:all .15s}
+.sm-btn:hover{background:var(--surf3);color:var(--txt)}
+.sm-btn.danger:hover{color:var(--red);background:rgba(224,92,92,.12)}
+.empty{text-align:center;padding:60px 16px;color:var(--txt3)}
+.empty-icon{font-size:50px;margin-bottom:16px;opacity:.3}
+.empty h3{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--txt);margin-bottom:8px}
+.empty p{font-size:13px;line-height:1.7}
+
+/* PLAYER */
+.player{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:480px;
+  background:rgba(15,15,28,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-top:1px solid rgba(212,168,83,.18);padding:14px 22px 32px;z-index:100}
+.player-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.player-art{width:42px;height:42px;border-radius:10px;
+  background:linear-gradient(135deg,var(--gold),#7a5000);
+  display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.player-info{flex:1;min-width:0}
+.player-title{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player-sub{font-size:11px;color:var(--txt3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player-sub.active-folder{color:var(--gold)}
+.prog-wrap{margin-bottom:10px}
+.prog-bar{width:100%;height:3px;background:rgba(255,255,255,.08);border-radius:2px;cursor:pointer;position:relative}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:2px;width:0%;transition:width .1s linear;position:relative}
+.prog-fill::after{content:'';position:absolute;right:-4px;top:-3px;width:9px;height:9px;
+  background:var(--gold2);border-radius:50%;box-shadow:0 0 6px rgba(240,201,106,.5)}
+.prog-times{display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);margin-top:5px}
+.controls{display:flex;align-items:center;justify-content:center;gap:22px}
+.ctrl{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:20px;
+  padding:6px;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.ctrl:hover{color:var(--txt);transform:scale(1.1)}
+.ctrl.play{width:48px;height:48px;background:linear-gradient(135deg,var(--gold),#8b6010);
+  border-radius:50%;color:#0f0f1c;font-size:20px}
+.ctrl.play:hover{transform:scale(1.05);filter:brightness(1.1)}
+
+/* MODALS */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s}
+.overlay.show{opacity:1;pointer-events:all}
+.modal{background:var(--bg2);border:1px solid rgba(212,168,83,.15);
+  border-radius:20px 20px 0 0;padding:24px 22px 40px;
+  width:100%;max-width:480px;
+  transform:translateY(100%);transition:transform .25s cubic-bezier(.22,1,.36,1);
+  max-height:85vh;overflow-y:auto}
+.modal::-webkit-scrollbar{width:3px}
+.modal::-webkit-scrollbar-thumb{background:rgba(212,168,83,.15);border-radius:2px}
+.overlay.show .modal{transform:translateY(0)}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-style:italic;color:var(--gold2);margin-bottom:18px}
+.modal label{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+.modal input[type=text],.modal input[type=password]{
+  width:100%;background:var(--surf);border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;padding:12px 16px;color:var(--txt);
+  font-family:'Jost',sans-serif;font-size:14px;outline:none;transition:border-color .2s;margin-bottom:16px}
+.modal input:focus{border-color:var(--gold)}
+.modal input::placeholder{color:var(--txt3)}
+.modal-row{display:flex;gap:10px;margin-top:4px}
+.btn{flex:1;padding:13px;border-radius:11px;border:none;
+  font-family:'Jost',sans-serif;font-size:13px;font-weight:600;
+  letter-spacing:.8px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.btn-primary{background:linear-gradient(135deg,var(--gold),#8b6010);color:#0f0f1c}
+.btn-primary:hover{filter:brightness(1.1)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-secondary{background:var(--surf);color:var(--txt2);border:1px solid rgba(255,255,255,.08)}
+.btn-secondary:hover{background:var(--surf2)}
+.btn-danger{background:rgba(224,92,92,.15);color:var(--red);border:1px solid rgba(224,92,92,.2)}
+.btn-danger:hover{background:rgba(224,92,92,.25)}
+.divider{height:1px;background:rgba(255,255,255,.06);margin:16px 0}
+.admin-badge{background:rgba(212,168,83,.15);border:1px solid rgba(212,168,83,.3);
+  border-radius:20px;padding:3px 10px;font-size:10px;color:var(--gold);letter-spacing:1px}
+.upload-zone{border:2px dashed rgba(212,168,83,.25);border-radius:var(--r);padding:28px;
+  text-align:center;cursor:pointer;margin-bottom:14px;transition:all .2s}
+.upload-zone:hover{border-color:var(--gold);background:var(--golddim)}
+.file-queue{margin:10px 0 14px}
+.fq-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.fq-item:last-child{border-bottom:none}
+.fq-num{font-size:12px;color:var(--txt3);width:20px;text-align:right;flex-shrink:0}
+.fq-name{flex:1;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fq-rm{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:13px;padding:4px}
+.fq-rm:hover{color:var(--red)}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(212,168,83,.3);
+  border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);
+  background:var(--surf2);border:1px solid rgba(212,168,83,.3);
+  border-radius:30px;padding:10px 20px;font-size:13px;z-index:999;
+  transition:transform .3s cubic-bezier(.22,1,.36,1);white-space:nowrap;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* Drive info box */
+.info-box{background:var(--surf);border:1px solid rgba(212,168,83,.15);border-radius:10px;
+  padding:12px 14px;font-size:12px;color:var(--txt3);line-height:1.7;margin-bottom:16px}
+.info-box strong{color:var(--txt2)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="h-left">
+      <div class="eyebrow" id="eyebrow">Travel Audio</div>
+      <h1 id="appTitle">Аудио<em>Гид</em></h1>
+    </div>
+    <div class="h-right">
+      <button class="icon-btn" onclick="toggleLang()" id="langBtn">EN</button>
+      <button class="icon-btn" id="adminBtn" onclick="openAdminModal()">⚙</button>
+    </div>
+  </header>
+  <nav class="tabs">
+    <button class="tab active" id="tabLib" onclick="showTab('lib')"></button>
+    <button class="tab" id="tabInfo" onclick="showTab('info')"></button>
+  </nav>
+  <main id="mainContent"></main>
+  <div class="player">
+    <div class="player-row">
+      <div class="player-art">🗺️</div>
+      <div class="player-info">
+        <div class="player-title" id="pTitle">—</div>
+        <div class="player-sub" id="pSub">—</div>
+      </div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-bar" onclick="seekAudio(event)">
+        <div class="prog-fill" id="progFill"></div>
+      </div>
+      <div class="prog-times"><span id="tCur">0:00</span><span id="tTot">0:00</span></div>
+    </div>
+    <div class="controls">
+      <button class="ctrl" onclick="skipTrack(-1)">⏮</button>
+      <button class="ctrl play" id="playBtn" onclick="togglePlay()">▶</button>
+      <button class="ctrl" onclick="skipTrack(1)">⏭</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="overlay" id="ovLogin">
+  <div class="modal">
+    <div class="modal-title" id="mLoginTitle">Admin Login</div>
+    <label id="mLoginLabel">PASSWORD</label>
+    <input type="password" id="loginInput" onkeydown="if(event.key==='Enter')doLogin()">
+    <div id="loginErr" style="color:var(--red);font-size:12px;margin-top:-10px;margin-bottom:14px;display:none"></div>
+    <div class="modal-row">
+      <button class="btn btn-secondary" id="mLoginCancel" onclick="closeOv('ovLogin')">Cancel</button>
+      <button class="btn btn-primary" id="mLoginOk" onclick="doLogin()">Login</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="overlay" id="ovAdmin">
+  <div class="modal">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+      <div class="modal-title" style="margin-bottom:0" id="mAdminTitle">Admin Panel</div>
+      <span class="admin-badge" id="mAdminBadge">ADMIN</span>
+    </div>
+
+    <!-- Google Drive -->
+    <div class="info-box" id="driveInfoBox"></div>
+    <label id="mDriveFolderLabel">GOOGLE DRIVE FOLDER ID</label>
+    <input type="text" id="driveFolderInput" placeholder="1aBcDeFgHiJkLmNoPqRsTuVwXyZ">
+    <label id="mDriveApiLabel">GOOGLE API KEY</label>
+    <input type="text" id="driveApiInput" placeholder="AIzaSy...">
+    <div class="modal-row" style="margin-bottom:8px">
+      <button class="btn btn-primary" id="mDriveSave" onclick="saveDrive()">Save & Connect</button>
+    </div>
+    <div id="driveStatus" style="font-size:12px;text-align:center;margin-bottom:4px;min-height:18px"></div>
+
+    <div class="divider"></div>
+
+    <!-- Folders -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold)" id="mFoldersLabel">FOLDERS</div>
+      <button class="icon-btn" id="mNewFolder" onclick="openFolderModal(null)">+ New</button>
+    </div>
+    <div id="adminFolderList"></div>
+
+    <div class="divider"></div>
+    <div class="modal-row">
+      <button class="btn btn-danger" id="mLogout" onclick="doLogout()">Logout</button>
+      <button class="btn btn-secondary" id="mClose" onclick="closeOv('ovAdmin')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOLDER NAME -->
+<div class="overlay" id="ovFolder">
+  <div class="modal">
+    <div class="modal-title" id="mFolderTitle">New Folder</div>
+    <label id="mFolderNameLabel">FOLDER NAME</label>
+    <input type="text" id="folderNameInput" onkeydown="if(event.key==='Enter')saveFolder()">
+    <div class="modal-row">
+      <button class="btn btn-secondary" id="mFolderCancel" onclick="closeOv('ovFolder')">Cancel</button>
+      <button class="btn btn-primary" id="mFolderSave" onclick="saveFolder()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- UPLOAD -->
+<div class="overlay" id="ovUpload">
+  <div class="modal">
+    <div class="modal-title" id="mUploadTitle">Upload Tracks</div>
+    <div id="uploadFolderLabel" style="font-size:12px;color:var(--gold);margin-bottom:14px"></div>
+    <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+      <div style="font-size:28px;margin-bottom:8px">🎧</div>
+      <div style="font-size:14px;font-family:'Cormorant Garamond',serif" id="mUploadZoneLabel">Choose audio files</div>
+      <div style="font-size:11px;color:var(--txt3);margin-top:4px" id="mUploadZoneSub">MP3, WAV, M4A, OGG</div>
+    </div>
+    <input type="file" id="fileInput" accept="audio/*" multiple style="display:none" onchange="onFilesChosen(event)">
+    <div id="fileQueue" class="file-queue"></div>
+    <div id="uploadProg" style="display:none;font-size:12px;color:var(--txt3);margin-bottom:10px"></div>
+    <div class="modal-row">
+      <button class="btn btn-secondary" id="mUploadCancel" onclick="closeOv('ovUpload')">Cancel</button>
+      <button class="btn btn-primary" id="mUploadConfirm" onclick="confirmUpload()">Upload</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<audio id="audio"></audio>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────────
+let lang = localStorage.getItem('ag_lang') || 'ru';
+let isAdmin = false;
+let currentTab = 'lib';
+let curPlaylist = [];   // reference to a folder.tracks array
+let curIdx = -1;
+let curFolderId = null;
+let isPlaying = false;
+let editingFolderId = null;
+let uploadFolderId = null;
+let pendingFiles = [];
+
+let folders = JSON.parse(localStorage.getItem('ag_folders') || '[]');
+let driveConfig = JSON.parse(localStorage.getItem('ag_drive') || '{}');
+const ADMIN_PASS_KEY = 'ag_adminpass';
+
+// ─── IDB ─────────────────────────────────────────────────────
+let db;
+async function openDB() {
+  return new Promise((res,rej) => {
+    const r = indexedDB.open('AudioGuideDB',2);
+    r.onupgradeneeded = e => { if(!e.target.result.objectStoreNames.contains('files')) e.target.result.createObjectStore('files',{keyPath:'id'}); };
+    r.onsuccess = e => { db=e.target.result; res(); };
+    r.onerror = rej;
+  });
+}
+const saveBlob = (id,blob) => new Promise((res,rej)=>{ const tx=db.transaction('files','readwrite'); tx.objectStore('files').put({id,blob}); tx.oncomplete=res; tx.onerror=rej; });
+const getBlob = id => new Promise((res,rej)=>{ const tx=db.transaction('files','readonly'); const r=tx.objectStore('files').get(id); r.onsuccess=e=>res(e.target.result?.blob); r.onerror=rej; });
+const delBlob = id => new Promise(res=>{ const tx=db.transaction('files','readwrite'); tx.objectStore('files').delete(id); tx.oncomplete=res; });
+
+// ─── I18N ─────────────────────────────────────────────────────
+const T = {
+  ru:{
+    eyebrow:'Аудиопутеводитель', appTitle:'Аудио<em>Гид</em>',
+    tabLib:'Гиды', tabInfo:'О приложении',
+    noFolders:'Пока нет папок', noFoldersDesc:'Войдите как администратор, чтобы создать папки и загрузить гиды.',
+    noTracks:'Нет треков', playerIdle:'Выберите трек', playerIdleSub:'Нажмите на трек, чтобы начать',
+    trSingle:'трек', trFew:'трека', trMany:'треков',
+    loginTitle:'Вход администратора', loginLabel:'ПАРОЛЬ', loginCancel:'Отмена', loginOk:'Войти', loginErr:'Неверный пароль',
+    adminTitle:'Панель администратора',
+    driveInfo:'<strong>Как подключить Google Drive:</strong><br>1. Создайте папку в Google Drive и откройте ей доступ «для всех по ссылке».<br>2. Скопируйте ID папки из URL (длинная строка букв и цифр).<br>3. Создайте Google API Key в <a href="https://console.cloud.google.com" target="_blank" style="color:var(--gold)">Google Cloud Console</a> с доступом к Drive API.',
+    driveFolderLabel:'ID ПАПКИ GOOGLE DRIVE', driveApiLabel:'GOOGLE API KEY',
+    driveSave:'Сохранить и подключить', driveOk:'✓ Drive подключён', driveErr:'Ошибка — проверьте ключи',
+    foldersLabel:'ПАПКИ', newFolder:'+ Новая',
+    logout:'Выйти', close:'Закрыть',
+    folderTitleNew:'Новая папка', folderTitleEdit:'Переименовать',
+    folderLabel:'НАЗВАНИЕ', folderCancel:'Отмена', folderSave:'Сохранить',
+    uploadTitle:'Загрузить треки', uploadZone:'Выберите аудиофайлы', uploadSub:'MP3, WAV, M4A, OGG',
+    uploadCancel:'Отмена', uploadConfirm:'Загрузить', uploading:'Загрузка',
+    toastSaved:'Сохранено ✓', toastDeleted:'Удалено', toastUploaded:'Загружено ✓',
+    infoTitle:'О приложении',
+    infoBody:'<p style="font-size:14px;line-height:1.8;color:var(--txt2)"><strong style="color:var(--txt)">АудиоГид</strong> — аудиопутеводитель для путешественников. Организуйте маршруты по папкам, загружайте аудиофайлы — треки нумеруются автоматически и проигрываются по порядку.</p><br><p style="font-size:13px;color:var(--txt3);line-height:1.7">Для управления контентом войдите через кнопку ⚙ в правом верхнем углу.</p>',
+  },
+  en:{
+    eyebrow:'Travel Audio', appTitle:'Audio<em>Guide</em>',
+    tabLib:'Guides', tabInfo:'About',
+    noFolders:'No folders yet', noFoldersDesc:'Log in as admin to create folders and upload audio guides.',
+    noTracks:'No tracks yet', playerIdle:'Select a track', playerIdleSub:'Tap any track to start',
+    trSingle:'track', trFew:'tracks', trMany:'tracks',
+    loginTitle:'Admin Login', loginLabel:'PASSWORD', loginCancel:'Cancel', loginOk:'Login', loginErr:'Wrong password',
+    adminTitle:'Admin Panel',
+    driveInfo:'<strong>How to connect Google Drive:</strong><br>1. Create a folder in Google Drive and set sharing to "Anyone with the link".<br>2. Copy the folder ID from the URL (the long string of letters & numbers).<br>3. Create a Google API Key in <a href="https://console.cloud.google.com" target="_blank" style="color:var(--gold)">Google Cloud Console</a> with Drive API access.',
+    driveFolderLabel:'GOOGLE DRIVE FOLDER ID', driveApiLabel:'GOOGLE API KEY',
+    driveSave:'Save & Connect', driveOk:'✓ Drive connected', driveErr:'Error — check your keys',
+    foldersLabel:'FOLDERS', newFolder:'+ New',
+    logout:'Logout', close:'Close',
+    folderTitleNew:'New Folder', folderTitleEdit:'Rename Folder',
+    folderLabel:'FOLDER NAME', folderCancel:'Cancel', folderSave:'Save',
+    uploadTitle:'Upload Tracks', uploadZone:'Choose audio files', uploadSub:'MP3, WAV, M4A, OGG',
+    uploadCancel:'Cancel', uploadConfirm:'Upload', uploading:'Uploading',
+    toastSaved:'Saved ✓', toastDeleted:'Deleted', toastUploaded:'Uploaded ✓',
+    infoTitle:'About',
+    infoBody:'<p style="font-size:14px;line-height:1.8;color:var(--txt2)"><strong style="color:var(--txt)">AudioGuide</strong> is your personal travel audio companion. Organise routes into folders and upload audio files — tracks are numbered automatically and play in order.</p><br><p style="font-size:13px;color:var(--txt3);line-height:1.7">To manage content, log in as admin via the ⚙ button in the top right.</p>',
+  }
+};
+const t = k => T[lang][k] ?? k;
+
+function trCount(n) {
+  if(lang==='en') return n+' '+(n===1?t('trSingle'):t('trMany'));
+  const m=n%10,h=n%100;
+  if(m===1&&h!==11) return n+' '+t('trSingle');
+  if([2,3,4].includes(m)&&![12,13,14].includes(h)) return n+' '+t('trFew');
+  return n+' '+t('trMany');
+}
+
+// ─── LANG ────────────────────────────────────────────────────
+function toggleLang(){
+  lang = lang==='ru'?'en':'ru';
+  localStorage.setItem('ag_lang',lang);
+  applyLang(); renderMain();
+}
+function applyLang(){
+  const L = id => document.getElementById(id);
+  L('eyebrow').textContent=t('eyebrow');
+  L('appTitle').innerHTML=t('appTitle');
+  L('langBtn').textContent=lang==='ru'?'EN':'RU';
+  L('tabLib').textContent=t('tabLib');
+  L('tabInfo').textContent=t('tabInfo');
+  L('mLoginTitle').textContent=t('loginTitle');
+  L('mLoginLabel').textContent=t('loginLabel');
+  L('mLoginCancel').textContent=t('loginCancel');
+  L('mLoginOk').textContent=t('loginOk');
+  L('mAdminTitle').textContent=t('adminTitle');
+  L('driveInfoBox').innerHTML=t('driveInfo');
+  L('mDriveFolderLabel').textContent=t('driveFolderLabel');
+  L('mDriveApiLabel').textContent=t('driveApiLabel');
+  L('mDriveSave').textContent=t('driveSave');
+  L('mFoldersLabel').textContent=t('foldersLabel');
+  L('mNewFolder').textContent=t('newFolder');
+  L('mLogout').textContent=t('logout');
+  L('mClose').textContent=t('close');
+  L('mFolderNameLabel').textContent=t('folderLabel');
+  L('mFolderCancel').textContent=t('folderCancel');
+  L('mFolderSave').textContent=t('folderSave');
+  L('mUploadTitle').textContent=t('uploadTitle');
+  L('mUploadZoneLabel').textContent=t('uploadZone');
+  L('mUploadZoneSub').textContent=t('uploadSub');
+  L('mUploadCancel').textContent=t('uploadCancel');
+  L('mUploadConfirm').textContent=t('uploadConfirm');
+  if(curIdx<0){
+    L('pTitle').textContent=t('playerIdle');
+    L('pSub').textContent=t('playerIdleSub');
+    L('pSub').className='player-sub';
+  }
+}
+
+// ─── TABS ────────────────────────────────────────────────────
+function showTab(tab){
+  currentTab=tab;
+  document.getElementById('tabLib').classList.toggle('active',tab==='lib');
+  document.getElementById('tabInfo').classList.toggle('active',tab==='info');
+  renderMain();
+}
+function renderMain(){ currentTab==='lib'?renderLibrary():renderInfo(); }
+
+// ─── LIBRARY ─────────────────────────────────────────────────
+function renderLibrary(){
+  const el=document.getElementById('mainContent');
+  if(!folders.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">🗺️</div><h3>${t('noFolders')}</h3><p>${t('noFoldersDesc')}</p></div>`;
+    return;
+  }
+  let html='';
+  folders.forEach(folder=>{
+    const open=folder._open;
+    const tracks=folder.tracks||[];
+    html+=`<div class="folder-card ${open?'open':''}" id="fc_${folder.id}">
+      <div class="folder-head" onclick="toggleFolder('${folder.id}')">
+        <span class="folder-arrow">▶</span>
+        <span class="folder-icon">📁</span>
+        <div class="folder-info">
+          <div class="folder-name">${esc(folder.name)}</div>
+          <div class="folder-meta">${trCount(tracks.length)}</div>
+        </div>
+        ${isAdmin?`<div class="folder-admin-btns" onclick="event.stopPropagation()">
+          <button class="sm-btn" onclick="openUploadModal('${folder.id}')">＋</button>
+          <button class="sm-btn" onclick="openFolderModal('${folder.id}')">✎</button>
+          <button class="sm-btn danger" onclick="deleteFolder('${folder.id}')">✕</button>
+        </div>`:''}
+      </div>`;
+    if(open){
+      html+=`<div class="track-list">`;
+      if(!tracks.length){
+        html+=`<div style="padding:8px 4px;font-size:13px;color:var(--txt3)">${t('noTracks')}</div>`;
+      } else {
+        tracks.forEach((tr,i)=>{
+          const playing=curFolderId===folder.id&&curIdx===i&&isPlaying;
+          html+=`<div class="track-item ${playing?'playing':''}" onclick="playTrack('${folder.id}',${i})">
+            <span class="track-num">${i+1}</span>
+            <div class="track-thumb">${playing?'<div class="eq"><span></span><span></span><span></span></div>':'🎧'}</div>
+            <span class="track-name">${esc(tr.name)}</span>
+            <span class="track-dur">${tr.duration||''}</span>
+            ${isAdmin?`<button class="track-del" onclick="event.stopPropagation();deleteTrack('${folder.id}','${tr.id}')">✕</button>`:''}
+          </div>`;
+        });
+      }
+      html+=`</div>`;
+    }
+    html+=`</div>`;
+  });
+  el.innerHTML=html;
+}
+
+function toggleFolder(id){
+  const f=folders.find(x=>x.id===id);
+  if(f){ f._open=!f._open; saveFolders(); renderLibrary(); }
+}
+
+function renderInfo(){
+  document.getElementById('mainContent').innerHTML=`<div style="padding:8px 0">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-style:italic;color:var(--gold2);margin-bottom:16px">${t('infoTitle')}</div>
+    ${t('infoBody')}</div>`;
+}
+
+// ─── AUDIO ───────────────────────────────────────────────────
+const audio=document.getElementById('audio');
+
+async function playTrack(folderId,idx){
+  const folder=folders.find(f=>f.id===folderId);
+  if(!folder||!folder.tracks[idx]) return;
+  curFolderId=folderId; curPlaylist=folder.tracks; curIdx=idx;
+  const tr=folder.tracks[idx];
+  let src;
+  if(tr.blobId){ const b=await getBlob(tr.blobId); if(b) src=URL.createObjectURL(b); }
+  else if(tr.url) src=tr.url;
+  if(!src) return;
+  audio.src=src; audio.play(); isPlaying=true;
+  document.getElementById('pTitle').textContent=tr.name;
+  document.getElementById('pSub').textContent='📁 '+folder.name;
+  document.getElementById('pSub').className='player-sub active-folder';
+  renderLibrary();
+}
+
+function togglePlay(){
+  if(curIdx<0){
+    const f=folders.find(x=>x.tracks&&x.tracks.length);
+    if(f){ playTrack(f.id,0); return; }
+  }
+  if(audio.paused){ audio.play(); isPlaying=true; }
+  else{ audio.pause(); isPlaying=false; }
+  document.getElementById('playBtn').textContent=isPlaying?'⏸':'▶';
+  renderLibrary();
+}
+
+function skipTrack(dir){
+  if(!curPlaylist.length) return;
+  playTrack(curFolderId,(curIdx+dir+curPlaylist.length)%curPlaylist.length);
+}
+
+function seekAudio(e){
+  if(!audio.duration) return;
+  const r=e.currentTarget.getBoundingClientRect();
+  audio.currentTime=((e.clientX-r.left)/r.width)*audio.duration;
+}
+
+audio.addEventListener('timeupdate',()=>{
+  const p=audio.duration?(audio.currentTime/audio.duration*100):0;
+  document.getElementById('progFill').style.width=p+'%';
+  document.getElementById('tCur').textContent=fmt(audio.currentTime);
+  document.getElementById('tTot').textContent=fmt(audio.duration);
+});
+audio.addEventListener('ended',()=>skipTrack(1));
+audio.addEventListener('play',()=>{ isPlaying=true; document.getElementById('playBtn').textContent='⏸'; renderLibrary(); });
+audio.addEventListener('pause',()=>{ isPlaying=false; document.getElementById('playBtn').textContent='▶'; renderLibrary(); });
+
+function fmt(s){ if(!s||isNaN(s))return'0:00'; return`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`; }
+
+// ─── AUTH ────────────────────────────────────────────────────
+function openAdminModal(){ if(isAdmin){openAdminPanel();return;} openOv('ovLogin'); setTimeout(()=>document.getElementById('loginInput').focus(),300); }
+function doLogin(){
+  const pass=document.getElementById('loginInput').value;
+  const stored=localStorage.getItem(ADMIN_PASS_KEY)||'admin123';
+  if(pass===stored){
+    isAdmin=true; closeOv('ovLogin'); document.getElementById('loginInput').value='';
+    document.getElementById('loginErr').style.display='none';
+    openAdminPanel(); renderLibrary();
+  } else {
+    const e=document.getElementById('loginErr'); e.textContent=t('loginErr'); e.style.display='block';
+  }
+}
+function doLogout(){ isAdmin=false; closeOv('ovAdmin'); renderLibrary(); }
+
+// ─── ADMIN ───────────────────────────────────────────────────
+function openAdminPanel(){
+  document.getElementById('driveFolderInput').value=driveConfig.folderId||'';
+  document.getElementById('driveApiInput').value=driveConfig.apiKey||'';
+  document.getElementById('driveStatus').textContent='';
+  renderAdminFolderList();
+  openOv('ovAdmin');
+}
+
+function renderAdminFolderList(){
+  const el=document.getElementById('adminFolderList');
+  if(!folders.length){ el.innerHTML=`<div style="font-size:13px;color:var(--txt3);padding:4px 0">${t('noFolders')}</div>`; return; }
+  el.innerHTML=folders.map(f=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+      <span>📁</span>
+      <span style="flex:1;font-size:14px">${esc(f.name)}</span>
+      <span style="font-size:11px;color:var(--txt3)">${(f.tracks||[]).length}</span>
+      <button class="sm-btn" onclick="openUploadModal('${f.id}');closeOv('ovAdmin')">＋</button>
+      <button class="sm-btn" onclick="openFolderModal('${f.id}');closeOv('ovAdmin')">✎</button>
+      <button class="sm-btn danger" onclick="deleteFolder('${f.id}');renderAdminFolderList()">✕</button>
+    </div>`).join('');
+}
+
+function saveDrive(){
+  driveConfig.folderId=document.getElementById('driveFolderInput').value.trim();
+  driveConfig.apiKey=document.getElementById('driveApiInput').value.trim();
+  localStorage.setItem('ag_drive',JSON.stringify(driveConfig));
+  const st=document.getElementById('driveStatus');
+  if(driveConfig.folderId&&driveConfig.apiKey){
+    st.textContent=t('driveOk'); st.style.color='var(--green)'; showToast(t('driveOk'));
+  } else { st.textContent=t('driveErr'); st.style.color='var(--red)'; }
+}
+
+// ─── FOLDERS ─────────────────────────────────────────────────
+function openFolderModal(id){
+  editingFolderId=id;
+  document.getElementById('mFolderTitle').textContent=id?t('folderTitleEdit'):t('folderTitleNew');
+  const f=id?folders.find(x=>x.id===id):null;
+  document.getElementById('folderNameInput').value=f?f.name:'';
+  openOv('ovFolder');
+  setTimeout(()=>document.getElementById('folderNameInput').focus(),300);
+}
+function saveFolder(){
+  const name=document.getElementById('folderNameInput').value.trim();
+  if(!name) return;
+  if(editingFolderId){ const f=folders.find(x=>x.id===editingFolderId); if(f)f.name=name; }
+  else folders.push({id:uid(),name,tracks:[],_open:false});
+  saveFolders(); closeOv('ovFolder'); showToast(t('toastSaved')); renderLibrary(); renderAdminFolderList();
+}
+function deleteFolder(id){
+  if(!confirm(lang==='ru'?'Удалить папку и все треки?':'Delete folder and all tracks?')) return;
+  const i=folders.findIndex(x=>x.id===id);
+  if(i>=0) folders.splice(i,1);
+  saveFolders(); showToast(t('toastDeleted')); renderLibrary(); renderAdminFolderList();
+}
+
+// ─── UPLOAD ──────────────────────────────────────────────────
+function openUploadModal(folderId){
+  uploadFolderId=folderId; pendingFiles=[];
+  const f=folders.find(x=>x.id===folderId);
+  document.getElementById('uploadFolderLabel').textContent='📁 '+(f?f.name:'');
+  document.getElementById('fileQueue').innerHTML='';
+  document.getElementById('uploadProg').style.display='none';
+  document.getElementById('fileInput').value='';
+  document.getElementById('mUploadConfirm').disabled=false;
+  openOv('ovUpload');
+}
+function onFilesChosen(e){ pendingFiles=Array.from(e.target.files); renderFileQueue(); }
+function renderFileQueue(){
+  document.getElementById('fileQueue').innerHTML=pendingFiles.map((f,i)=>`
+    <div class="fq-item">
+      <span class="fq-num">${i+1}</span>
+      <span class="fq-name">${esc(f.name.replace(/\.[^.]+$/,''))}</span>
+      <button class="fq-rm" onclick="pendingFiles.splice(${i},1);renderFileQueue()">✕</button>
+    </div>`).join('');
+}
+async function confirmUpload(){
+  if(!pendingFiles.length) return;
+  const folder=folders.find(x=>x.id===uploadFolderId);
+  if(!folder) return;
+  const prog=document.getElementById('uploadProg');
+  prog.style.display='block';
+  document.getElementById('mUploadConfirm').disabled=true;
+  for(let i=0;i<pendingFiles.length;i++){
+    const file=pendingFiles[i];
+    prog.innerHTML=`<span class="spin"></span>${t('uploading')} ${i+1}/${pendingFiles.length}: ${esc(file.name)}`;
+    const blobId=uid();
+    await saveBlob(blobId,file);
+    const dur=await audioDur(file);
+    if(!folder.tracks)folder.tracks=[];
+    folder.tracks.push({id:uid(),blobId,name:file.name.replace(/\.[^.]+$/,''),duration:fmt(dur)});
+  }
+  saveFolders(); prog.style.display='none';
+  document.getElementById('mUploadConfirm').disabled=false;
+  closeOv('ovUpload'); showToast(t('toastUploaded')); renderLibrary(); renderAdminFolderList();
+}
+function audioDur(file){
+  return new Promise(res=>{
+    const a=new Audio(),url=URL.createObjectURL(file);
+    a.onloadedmetadata=()=>{ URL.revokeObjectURL(url); res(a.duration); };
+    a.onerror=()=>res(0); a.src=url;
+  });
+}
+function deleteTrack(folderId,trackId){
+  const folder=folders.find(f=>f.id===folderId);
+  if(!folder) return;
+  const i=folder.tracks.findIndex(t=>t.id===trackId);
+  if(i>=0){ const tr=folder.tracks[i]; if(tr.blobId)delBlob(tr.blobId); folder.tracks.splice(i,1); }
+  saveFolders(); showToast(t('toastDeleted')); renderLibrary();
+}
+
+// ─── UTILS ───────────────────────────────────────────────────
+function saveFolders(){ localStorage.setItem('ag_folders',JSON.stringify(folders)); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function openOv(id){ document.getElementById(id).classList.add('show'); }
+function closeOv(id){ document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('.overlay').forEach(ov=>ov.addEventListener('click',e=>{ if(e.target===ov)closeOv(ov.id); }));
+let toastT;
+function showToast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),2500); }
+
+// ─── INIT ────────────────────────────────────────────────────
+openDB().then(()=>{ applyLang(); renderMain(); });
+</script>
+</body>
+</html>
