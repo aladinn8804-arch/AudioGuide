@@ -19,14 +19,11 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overscroll-behavior:none}
-body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--txt);
-  display:flex;flex-direction:column;align-items:center;overflow:hidden;height:100vh}
+body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--txt);display:flex;flex-direction:column;align-items:center;overflow:hidden;height:100vh}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:radial-gradient(ellipse 60% 40% at 15% 10%,rgba(212,168,83,.07) 0%,transparent 60%),
              radial-gradient(ellipse 50% 60% at 85% 90%,rgba(80,60,160,.08) 0%,transparent 60%)}
 .app{position:relative;z-index:1;width:100%;max-width:480px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
-
-/* HEADER */
 header{flex-shrink:0;padding:44px 22px 14px;display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid rgba(212,168,83,.12)}
 .h-left .eyebrow{font-size:10px;letter-spacing:3.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
 .h-left h1{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;line-height:1}
@@ -34,87 +31,64 @@ header{flex-shrink:0;padding:44px 22px 14px;display:flex;align-items:flex-end;ju
 .h-right{display:flex;gap:8px;align-items:center}
 .icon-btn{background:var(--surf);border:1px solid rgba(212,168,83,.2);border-radius:20px;padding:6px 12px;color:var(--gold2);font-family:'Jost',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all .2s;letter-spacing:.5px;white-space:nowrap}
 .icon-btn:hover{background:var(--surf2);border-color:var(--gold)}
-
-/* TABS */
 .tabs{flex-shrink:0;display:flex;padding:0 22px;border-bottom:1px solid rgba(255,255,255,.05)}
 .tab{flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--txt3);font-family:'Jost',sans-serif;font-size:11px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;padding:11px 0;cursor:pointer;transition:all .2s}
 .tab.active{color:var(--gold2);border-bottom-color:var(--gold)}
-
-/* MAIN */
 main{flex:1;overflow-y:auto;padding:14px 22px;padding-bottom:calc(var(--ph) + 14px)}
 main::-webkit-scrollbar{width:3px}
 main::-webkit-scrollbar-thumb{background:rgba(212,168,83,.15);border-radius:2px}
-
-/* FOLDER CARD */
 .folder-card{background:var(--surf);border:1px solid rgba(255,255,255,.05);border-radius:var(--r);margin-bottom:10px;overflow:hidden;transition:border-color .2s}
 .folder-card.open{border-color:rgba(212,168,83,.25)}
 .folder-head{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer}
-.folder-arrow{font-size:9px;color:var(--txt3);transition:transform .2s;flex-shrink:0}
-.folder-card.open>.folder-head>.folder-arrow{transform:rotate(90deg)}
+.f-arrow{font-size:9px;color:var(--txt3);transition:transform .2s;flex-shrink:0}
+.folder-card.open > .folder-head > .f-arrow{transform:rotate(90deg)}
 .folder-icon{font-size:20px;flex-shrink:0}
 .folder-info{flex:1;min-width:0}
 .folder-name{font-family:'Cormorant Garamond',serif;font-size:19px;font-style:italic;color:var(--txt);transition:color .2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .folder-head:hover .folder-name{color:var(--gold2)}
 .folder-meta{font-size:11px;color:var(--txt3);margin-top:1px}
-.folder-admin-btns{display:flex;gap:4px;flex-shrink:0}
-
-/* DAY SECTION inside folder */
+.f-admin{display:flex;gap:4px;flex-shrink:0}
 .folder-body{padding:0 12px 10px}
-.day-section{margin-bottom:6px;border-radius:10px;overflow:hidden;background:var(--surf2)}
+.day-card{margin-bottom:6px;border-radius:10px;overflow:hidden;background:var(--surf2)}
 .day-head{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;transition:background .15s}
 .day-head:hover{background:var(--surf3)}
-.day-arrow{font-size:8px;color:var(--txt3);transition:transform .2s;flex-shrink:0}
-.day-section.open .day-arrow{transform:rotate(90deg)}
+.d-arrow{font-size:8px;color:var(--txt3);transition:transform .2s;flex-shrink:0}
+.day-card.open .d-arrow{transform:rotate(90deg)}
 .day-pill{background:rgba(212,168,83,.15);border:1px solid rgba(212,168,83,.25);border-radius:20px;padding:2px 10px;font-size:10px;letter-spacing:.5px;color:var(--gold);flex-shrink:0}
-.day-name{flex:1;font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.day-name-el{flex:1;font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .day-meta{font-size:10px;color:var(--txt3);flex-shrink:0}
-.day-admin-btns{display:flex;gap:3px;flex-shrink:0}
-
-/* TRACK LIST */
+.d-admin{display:flex;gap:3px;flex-shrink:0}
 .track-list{padding:2px 10px 8px}
-.track-item{display:flex;align-items:center;gap:10px;padding:8px 8px;border-radius:8px;cursor:pointer;transition:all .15s;margin-bottom:3px;border:1px solid transparent}
+.track-item{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;cursor:pointer;transition:all .15s;margin-bottom:3px;border:1px solid transparent}
 .track-item:hover{background:var(--surf3)}
 .track-item.playing{background:var(--surf3);border-color:rgba(212,168,83,.3)}
-.track-num{font-size:11px;color:var(--txt3);width:20px;text-align:right;flex-shrink:0;font-variant-numeric:tabular-nums}
-.track-item.playing .track-num{color:var(--gold)}
-.track-thumb{width:30px;height:30px;border-radius:7px;background:var(--surf);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all .2s}
-.track-item.playing .track-thumb{background:var(--gold)}
-.track-name{flex:1;min-width:0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.track-dur{font-size:11px;color:var(--txt3);flex-shrink:0}
-.track-del{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:12px;padding:4px 5px;border-radius:5px;transition:all .15s;flex-shrink:0}
-.track-del:hover{color:var(--red);background:rgba(224,92,92,.12)}
-
-/* Also show tracks directly in folder (no day) */
-.folder-tracks{padding:0 12px 10px}
-
-/* EQ */
+.t-num{font-size:11px;color:var(--txt3);width:20px;text-align:right;flex-shrink:0}
+.track-item.playing .t-num{color:var(--gold)}
+.t-thumb{width:30px;height:30px;border-radius:7px;background:var(--surf);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:background .2s}
+.track-item.playing .t-thumb{background:var(--gold)}
+.t-name{flex:1;min-width:0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t-dur{font-size:11px;color:var(--txt3);flex-shrink:0}
+.t-del{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:12px;padding:4px 5px;border-radius:5px;transition:all .15s;flex-shrink:0}
+.t-del:hover{color:var(--red);background:rgba(224,92,92,.12)}
 .eq{display:flex;align-items:flex-end;gap:2px;height:13px}
 .eq span{width:2.5px;background:var(--bg);border-radius:2px;animation:eqA .7s ease-in-out infinite alternate}
 .eq span:nth-child(2){animation-delay:.15s}
 .eq span:nth-child(3){animation-delay:.3s}
 @keyframes eqA{0%{height:3px}100%{height:12px}}
-
-/* BUTTONS */
 .sm-btn{width:26px;height:26px;border-radius:6px;background:transparent;border:none;color:var(--txt3);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .15s}
 .sm-btn:hover{background:var(--surf3);color:var(--txt)}
 .sm-btn.danger:hover{color:var(--red);background:rgba(224,92,92,.12)}
-
-/* EMPTY */
 .empty{text-align:center;padding:60px 16px;color:var(--txt3)}
 .empty-icon{font-size:50px;margin-bottom:16px;opacity:.3}
 .empty h3{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--txt);margin-bottom:8px}
 .empty p{font-size:13px;line-height:1.7}
-
-/* PLAYER */
-.player{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;
-  background:rgba(15,15,28,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  border-top:1px solid rgba(212,168,83,.18);padding:14px 22px 32px;z-index:100}
-.player-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.player-art{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#7a5000);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.player-info{flex:1;min-width:0}
-.player-title{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.player-sub{font-size:11px;color:var(--txt3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.player-sub.on{color:var(--gold)}
+.player{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(15,15,28,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(212,168,83,.18);padding:14px 22px 32px;z-index:100}
+.p-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.p-art{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#7a5000);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.p-info{flex:1;min-width:0}
+.p-title{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-sub{font-size:11px;color:var(--txt3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-sub.on{color:var(--gold)}
 .prog-wrap{margin-bottom:10px}
 .prog-bar{width:100%;height:3px;background:rgba(255,255,255,.08);border-radius:2px;cursor:pointer;position:relative}
 .prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:2px;width:0%;transition:width .1s linear;position:relative}
@@ -125,8 +99,6 @@ main::-webkit-scrollbar-thumb{background:rgba(212,168,83,.15);border-radius:2px}
 .ctrl:hover{color:var(--txt);transform:scale(1.1)}
 .ctrl.play{width:48px;height:48px;background:linear-gradient(135deg,var(--gold),#8b6010);border-radius:50%;color:#0f0f1c;font-size:20px}
 .ctrl.play:hover{transform:scale(1.05);filter:brightness(1.1)}
-
-/* MODALS */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
 .overlay.show{opacity:1;pointer-events:all}
 .modal{background:var(--bg2);border:1px solid rgba(212,168,83,.15);border-radius:20px 20px 0 0;padding:24px 22px 40px;width:100%;max-width:480px;transform:translateY(100%);transition:transform .25s cubic-bezier(.22,1,.36,1);max-height:85vh;overflow-y:auto}
@@ -163,16 +135,11 @@ main::-webkit-scrollbar-thumb{background:rgba(212,168,83,.15);border-radius:2px}
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--surf2);border:1px solid rgba(212,168,83,.3);border-radius:30px;padding:10px 20px;font-size:13px;z-index:999;transition:transform .3s cubic-bezier(.22,1,.36,1);white-space:nowrap;pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .info-box{background:var(--surf);border:1px solid rgba(212,168,83,.15);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--txt3);line-height:1.7;margin-bottom:16px}
-.info-box strong{color:var(--txt2)}
-
-/* Move track modal */
-.move-track-list{max-height:300px;overflow-y:auto;margin-bottom:14px}
-.move-option{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:background .15s;border:1px solid transparent}
-.move-option:hover{background:var(--surf2)}
-.move-option.selected{background:var(--surf2);border-color:rgba(212,168,83,.3)}
-.move-option-icon{font-size:16px;flex-shrink:0}
-.move-option-name{font-size:13px;flex:1}
-.move-option-sub{font-size:11px;color:var(--txt3)}
+.chip{display:inline-block;background:var(--surf2);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:5px 12px;font-size:12px;cursor:pointer;margin:3px;transition:all .15s}
+.chip.selected{background:var(--golddim);border-color:rgba(212,168,83,.4);color:var(--gold2)}
+.move-opt{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:background .15s;border:1px solid transparent;margin-bottom:4px}
+.move-opt:hover{background:var(--surf2)}
+.move-opt.selected{background:var(--surf2);border-color:rgba(212,168,83,.3)}
 </style>
 </head>
 <body>
@@ -183,21 +150,21 @@ main::-webkit-scrollbar-thumb{background:rgba(212,168,83,.15);border-radius:2px}
       <h1 id="appTitle">Аудио<em>Гид</em></h1>
     </div>
     <div class="h-right">
-      <button class="icon-btn" onclick="toggleLang()" id="langBtn">EN</button>
-      <button class="icon-btn" onclick="openAdminModal()">⚙</button>
+      <button class="icon-btn" id="langBtn" onclick="toggleLang()">EN</button>
+      <button class="icon-btn" onclick="openAdminModal()">&#9881;</button>
     </div>
   </header>
   <nav class="tabs">
-    <button class="tab active" id="tabLib" onclick="showTab('lib')"></button>
-    <button class="tab" id="tabInfo" onclick="showTab('info')"></button>
+    <button class="tab active" id="tabLib" onclick="showTab('lib')">Guides</button>
+    <button class="tab" id="tabInfo" onclick="showTab('info')">About</button>
   </nav>
   <main id="mainContent"></main>
   <div class="player">
-    <div class="player-row">
-      <div class="player-art">🗺️</div>
-      <div class="player-info">
-        <div class="player-title" id="pTitle">—</div>
-        <div class="player-sub" id="pSub">—</div>
+    <div class="p-row">
+      <div class="p-art">&#128506;</div>
+      <div class="p-info">
+        <div class="p-title" id="pTitle">&#8212;</div>
+        <div class="p-sub" id="pSub">&#8212;</div>
       </div>
     </div>
     <div class="prog-wrap">
@@ -205,9 +172,9 @@ main::-webkit-scrollbar-thumb{background:rgba(212,168,83,.15);border-radius:2px}
       <div class="prog-times"><span id="tCur">0:00</span><span id="tTot">0:00</span></div>
     </div>
     <div class="controls">
-      <button class="ctrl" onclick="skipTrack(-1)">⏮</button>
-      <button class="ctrl play" id="playBtn" onclick="togglePlay()">▶</button>
-      <button class="ctrl" onclick="skipTrack(1)">⏭</button>
+      <button class="ctrl" onclick="skipTrack(-1)">&#9198;</button>
+      <button class="ctrl play" id="playBtn" onclick="togglePlay()">&#9654;</button>
+      <button class="ctrl" onclick="skipTrack(1)">&#9197;</button>
     </div>
   </div>
 </div>
@@ -233,14 +200,14 @@ main::-webkit-scrollbar-thumb{background:rgba(212,168,83,.15);border-radius:2px}
       <div class="modal-title" style="margin-bottom:0" id="mAdminTitle">Admin Panel</div>
       <span class="admin-badge">ADMIN</span>
     </div>
-    <div class="info-box" id="driveInfoBox"></div>
+    <div class="info-box" id="driveInfoBox">Connect Google Drive to share files with all users.</div>
     <label id="mDriveFolderLabel">GOOGLE DRIVE FOLDER ID</label>
-    <input type="text" id="driveFolderInput">
+    <input type="text" id="driveFolderInput" placeholder="1aBcDeFg...">
     <label id="mDriveApiLabel">GOOGLE API KEY</label>
-    <input type="text" id="driveApiInput">
+    <input type="text" id="driveApiInput" placeholder="AIzaSy...">
     <div class="modal-row" style="margin-bottom:8px">
-      <button class="btn btn-secondary" onclick="refreshDrive()">↻ Refresh</button>
-      <button class="btn btn-primary" id="mDriveSave" onclick="saveDrive()">Save & Connect</button>
+      <button class="btn btn-secondary" onclick="refreshDrive()">&#8635; Refresh</button>
+      <button class="btn btn-primary" id="mDriveSave" onclick="saveDrive()">Save</button>
     </div>
     <div id="driveStatus" style="font-size:12px;text-align:center;margin-bottom:4px;min-height:18px"></div>
     <div class="divider"></div>
@@ -257,30 +224,30 @@ main::-webkit-scrollbar-thumb{background:rgba(212,168,83,.15);border-radius:2px}
   </div>
 </div>
 
-<!-- FOLDER NAME MODAL -->
+<!-- FOLDER MODAL -->
 <div class="overlay" id="ovFolder">
   <div class="modal">
     <div class="modal-title" id="mFolderTitle">New Folder</div>
     <label id="mFolderLabel">FOLDER NAME</label>
     <input type="text" id="folderNameInput" onkeydown="if(event.key==='Enter')saveFolder()">
     <div class="modal-row">
-      <button class="btn btn-secondary" onclick="closeOv('ovFolder')" id="mFolderCancel">Cancel</button>
-      <button class="btn btn-primary" onclick="saveFolder()" id="mFolderSave">Save</button>
+      <button class="btn btn-secondary" id="mFolderCancel" onclick="closeOv('ovFolder')">Cancel</button>
+      <button class="btn btn-primary" id="mFolderSave" onclick="saveFolder()">Save</button>
     </div>
   </div>
 </div>
 
-<!-- DAY/SECTION MODAL -->
+<!-- DAY MODAL -->
 <div class="overlay" id="ovDay">
   <div class="modal">
     <div class="modal-title" id="mDayTitle">New Section</div>
     <label id="mDayNumLabel">DAY NUMBER (optional)</label>
     <input type="text" id="dayNumInput" placeholder="1">
     <label id="mDayNameLabel">SECTION NAME</label>
-    <input type="text" id="dayNameInput" placeholder="e.g. Colosseum & Forum" onkeydown="if(event.key==='Enter')saveDay()">
+    <input type="text" id="dayNameInput" placeholder="e.g. Colosseum Tour" onkeydown="if(event.key==='Enter')saveDay()">
     <div class="modal-row">
-      <button class="btn btn-secondary" onclick="closeOv('ovDay')" id="mDayCancel">Cancel</button>
-      <button class="btn btn-primary" onclick="saveDay()" id="mDaySave">Save</button>
+      <button class="btn btn-secondary" id="mDayCancel" onclick="closeOv('ovDay')">Cancel</button>
+      <button class="btn btn-primary" id="mDaySave" onclick="saveDay()">Save</button>
     </div>
   </div>
 </div>
@@ -289,16 +256,13 @@ main::-webkit-scrollbar-thumb{background:rgba(212,168,83,.15);border-radius:2px}
 <div class="overlay" id="ovUpload">
   <div class="modal">
     <div class="modal-title" id="mUploadTitle">Upload Tracks</div>
-    <div id="uploadTargetLabel" style="font-size:12px;color:var(--gold);margin-bottom:6px"></div>
-
-    <!-- Target day selector -->
-    <div id="uploadDaySelector" style="margin-bottom:14px">
+    <div id="uploadTargetLabel" style="font-size:12px;color:var(--gold);margin-bottom:10px"></div>
+    <div id="uploadDaySelector" style="margin-bottom:14px;display:none">
       <label id="mUploadDayLabel">ADD TO SECTION</label>
-      <div id="uploadDayOptions" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+      <div id="uploadDayChips"></div>
     </div>
-
     <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
-      <div style="font-size:28px;margin-bottom:8px">🎧</div>
+      <div style="font-size:28px;margin-bottom:8px">&#127911;</div>
       <div style="font-size:14px;font-family:'Cormorant Garamond',serif" id="mUploadZoneLabel">Choose audio files</div>
       <div style="font-size:11px;color:var(--txt3);margin-top:4px">MP3, WAV, M4A, OGG</div>
     </div>
@@ -306,22 +270,22 @@ main::-webkit-scrollbar-thumb{background:rgba(212,168,83,.15);border-radius:2px}
     <div id="fileQueue" class="file-queue"></div>
     <div id="uploadProg" style="display:none;font-size:12px;color:var(--txt3);margin-bottom:10px"></div>
     <div class="modal-row">
-      <button class="btn btn-secondary" onclick="closeOv('ovUpload')" id="mUploadCancel">Cancel</button>
-      <button class="btn btn-primary" onclick="confirmUpload()" id="mUploadConfirm">Upload</button>
+      <button class="btn btn-secondary" id="mUploadCancel" onclick="closeOv('ovUpload')">Cancel</button>
+      <button class="btn btn-primary" id="mUploadConfirm" onclick="confirmUpload()">Upload</button>
     </div>
   </div>
 </div>
 
-<!-- MOVE TRACK MODAL -->
+<!-- MOVE MODAL -->
 <div class="overlay" id="ovMove">
   <div class="modal">
     <div class="modal-title" id="mMoveTitle">Move Track</div>
     <div id="moveTrackName" style="font-size:13px;color:var(--txt2);margin-bottom:14px"></div>
     <label id="mMoveLabel">MOVE TO SECTION</label>
-    <div class="move-track-list" id="moveOptions"></div>
+    <div id="moveOptions" style="margin-bottom:14px"></div>
     <div class="modal-row">
-      <button class="btn btn-secondary" onclick="closeOv('ovMove')" id="mMoveCancel">Cancel</button>
-      <button class="btn btn-primary" onclick="confirmMove()" id="mMoveConfirm">Move</button>
+      <button class="btn btn-secondary" id="mMoveCancel" onclick="closeOv('ovMove')">Cancel</button>
+      <button class="btn btn-primary" id="mMoveConfirm" onclick="confirmMove()">Move</button>
     </div>
   </div>
 </div>
@@ -330,577 +294,685 @@ main::-webkit-scrollbar-thumb{background:rgba(212,168,83,.15);border-radius:2px}
 <audio id="audio"></audio>
 
 <script>
-// ═══ STATE ════════════════════════════════════════════════════
-let lang = localStorage.getItem('ag_lang') || 'ru';
-let isAdmin = false;
-let currentTab = 'lib';
+var lang = localStorage.getItem('ag_lang') || 'ru';
+var isAdmin = false;
+var currentTab = 'lib';
+var curFolderId = null;
+var curDayId = null;
+var curIdx = -1;
+var curPlaylist = [];
+var isPlaying = false;
+var editingFolderId = null;
+var editingDayFolderId = null;
+var editingDayId = null;
+var uploadFolderId = null;
+var uploadDayId = null;
+var pendingFiles = [];
+var moveInfo = null;
+var moveTarget = undefined;
 
-// Playback
-let curFolderId = null, curDayId = null, curIdx = -1;
-let curPlaylist = []; // flat array of tracks currently playing
-let isPlaying = false;
+var folders = JSON.parse(localStorage.getItem('ag_folders') || '[]');
+var driveConfig = {
+  folderId: '1CMJ1JtSTqE9A_TXSChZOG-rf6vFl954X',
+  apiKey: 'AIzaSyBsZbfhcO8orXPsZDJ1jZ_xyRmpu-0FT70'
+};
+var saved = JSON.parse(localStorage.getItem('ag_drive') || '{}');
+if (saved.folderId) driveConfig.folderId = saved.folderId;
+if (saved.apiKey) driveConfig.apiKey = saved.apiKey;
 
-// Data
-// folders: [{id, name, days:[{id,num,name,tracks:[{id,name,blobId?,url?,duration}]}], tracks:[], _open, driveSourced?}]
-let folders = JSON.parse(localStorage.getItem('ag_folders') || '[]');
-const DEFAULT_DRIVE = { folderId: '1CMJ1JtSTqE9A_TXSChZOG-rf6vFl954X', apiKey: 'AIzaSyBsZbfhcO8orXPsZDJ1jZ_xyRmpu-0FT70' };
-let driveConfig = Object.assign({}, DEFAULT_DRIVE, JSON.parse(localStorage.getItem('ag_drive') || '{}'));
-
-// Modal state
-let editingFolderId = null;
-let editingDayId = null, editingDayFolderId = null;
-let uploadFolderId = null, uploadDayId = null;
-let pendingFiles = [];
-let moveTrackInfo = null; // {folderId, fromDayId, trackId}
-let moveTargetDayId = null;
-
-// ═══ IDB ══════════════════════════════════════════════════════
-let db;
-async function openDB(){
-  return new Promise((res,rej)=>{
-    const r=indexedDB.open('AudioGuideDB',2);
-    r.onupgradeneeded=e=>{ if(!e.target.result.objectStoreNames.contains('files')) e.target.result.createObjectStore('files',{keyPath:'id'}); };
-    r.onsuccess=e=>{db=e.target.result;res()};r.onerror=rej;
+// IDB
+var db;
+function openDB() {
+  return new Promise(function(res, rej) {
+    var r = indexedDB.open('AudioGuideDB', 2);
+    r.onupgradeneeded = function(e) {
+      if (!e.target.result.objectStoreNames.contains('files'))
+        e.target.result.createObjectStore('files', {keyPath: 'id'});
+    };
+    r.onsuccess = function(e) { db = e.target.result; res(); };
+    r.onerror = rej;
   });
 }
-const saveBlob=(id,blob)=>new Promise((res,rej)=>{const tx=db.transaction('files','readwrite');tx.objectStore('files').put({id,blob});tx.oncomplete=res;tx.onerror=rej;});
-const getBlob=id=>new Promise((res,rej)=>{const tx=db.transaction('files','readonly');const r=tx.objectStore('files').get(id);r.onsuccess=e=>res(e.target.result?.blob);r.onerror=rej;});
-const delBlob=id=>new Promise(res=>{const tx=db.transaction('files','readwrite');tx.objectStore('files').delete(id);tx.oncomplete=res;});
+function saveBlob(id, blob) {
+  return new Promise(function(res, rej) {
+    var tx = db.transaction('files', 'readwrite');
+    tx.objectStore('files').put({id: id, blob: blob});
+    tx.oncomplete = res; tx.onerror = rej;
+  });
+}
+function getBlob(id) {
+  return new Promise(function(res, rej) {
+    var tx = db.transaction('files', 'readonly');
+    var r = tx.objectStore('files').get(id);
+    r.onsuccess = function(e) { res(e.target.result ? e.target.result.blob : null); };
+    r.onerror = rej;
+  });
+}
+function delBlob(id) {
+  return new Promise(function(res) {
+    var tx = db.transaction('files', 'readwrite');
+    tx.objectStore('files').delete(id);
+    tx.oncomplete = res;
+  });
+}
 
-// ═══ I18N ═════════════════════════════════════════════════════
-const T={
-  ru:{
-    eyebrow:'Аудиопутеводитель',appTitle:'Аудио<em>Гид</em>',
-    tabLib:'Гиды',tabInfo:'О приложении',
-    noFolders:'Пока нет папок',noFoldersDesc:'Войдите как администратор, чтобы создать папки и загрузить гиды.',
-    noTracks:'Нет треков',playerIdle:'Выберите трек',playerIdleSub:'Нажмите на трек, чтобы начать',
-    trS:'трек',trF:'трека',trM:'треков',
-    loginTitle:'Вход администратора',loginLabel:'ПАРОЛЬ',loginCancel:'Отмена',loginOk:'Войти',loginErr:'Неверный пароль',
-    adminTitle:'Панель администратора',
-    driveInfo:'<strong>Google Drive:</strong> создайте папку, откройте доступ «для всех», скопируйте ID из URL.',
-    driveFolderLabel:'ID ПАПКИ GOOGLE DRIVE',driveApiLabel:'GOOGLE API KEY',
-    driveSave:'Сохранить',driveOk:'✓ Drive подключён',driveErr:'Ошибка — проверьте ключи',
-    foldersLabel:'ПАПКИ',newFolder:'+ Новая',logout:'Выйти',close:'Закрыть',
-    folderTitleNew:'Новая папка',folderTitleEdit:'Переименовать',folderLabel:'НАЗВАНИЕ',folderCancel:'Отмена',folderSave:'Сохранить',
-    dayTitleNew:'Новый раздел',dayTitleEdit:'Переименовать раздел',
-    dayNumLabel:'НОМЕР ДНЯ (необязательно)',dayNameLabel:'НАЗВАНИЕ РАЗДЕЛА',
-    dayCancel:'Отмена',daySave:'Сохранить',addDay:'+ Раздел',
-    uploadTitle:'Загрузить треки',uploadDayLabel:'ДОБАВИТЬ В РАЗДЕЛ',
-    uploadZone:'Выберите аудиофайлы',uploadCancel:'Отмена',uploadConfirm:'Загрузить',uploading:'Загрузка',
-    noSection:'Без раздела',
-    moveTitle:'Переместить трек',moveLabel:'ПЕРЕМЕСТИТЬ В РАЗДЕЛ',moveCancel:'Отмена',moveConfirm:'Переместить',
-    toastSaved:'Сохранено ✓',toastDeleted:'Удалено',toastUploaded:'Загружено ✓',toastMoved:'Перемещено ✓',
-    infoTitle:'О приложении',
-    infoBody:'<p style="font-size:14px;line-height:1.8;color:var(--txt2)"><strong style="color:var(--txt)">АудиоГид</strong> — аудиопутеводитель для путешественников.<br>Создавайте папки, разделы (по дням или темам), загружайте аудиофайлы.</p><br><p style="font-size:13px;color:var(--txt3);line-height:1.7">Для управления — войдите через ⚙ в правом верхнем углу.</p>',
+// I18N
+var T = {
+  ru: {
+    eyebrow: 'Аудиопутеводитель', appTitle: 'Аудио<em>Гид</em>',
+    tabLib: 'Гиды', tabInfo: 'О приложении',
+    noFolders: 'Пока нет папок', noFoldersDesc: 'Войдите как администратор, чтобы создать папки и загрузить гиды.',
+    noTracks: 'Нет треков', playerIdle: 'Выберите трек', playerIdleSub: 'Нажмите на трек, чтобы начать',
+    trS: 'трек', trF: 'трека', trM: 'треков',
+    loginTitle: 'Вход администратора', loginLabel: 'ПАРОЛЬ', loginCancel: 'Отмена', loginOk: 'Войти', loginErr: 'Неверный пароль',
+    adminTitle: 'Панель администратора',
+    driveInfo: 'Подключите Google Drive, чтобы все пользователи видели одни файлы.',
+    driveFolderLabel: 'ID ПАПКИ GOOGLE DRIVE', driveApiLabel: 'GOOGLE API KEY',
+    driveSave: 'Сохранить', driveOk: '✓ Drive подключён', driveErr: 'Ошибка — проверьте ключи',
+    foldersLabel: 'ПАПКИ', newFolder: '+ Новая', logout: 'Выйти', close: 'Закрыть',
+    folderTitleNew: 'Новая папка', folderTitleEdit: 'Переименовать', folderLabel: 'НАЗВАНИЕ', folderCancel: 'Отмена', folderSave: 'Сохранить',
+    dayTitleNew: 'Новый раздел', dayTitleEdit: 'Переименовать раздел',
+    dayNumLabel: 'НОМЕР ДНЯ (необязательно)', dayNameLabel: 'НАЗВАНИЕ РАЗДЕЛА',
+    dayCancel: 'Отмена', daySave: 'Сохранить', addDay: 'Раздел',
+    uploadTitle: 'Загрузить треки', uploadDayLabel: 'ДОБАВИТЬ В РАЗДЕЛ',
+    uploadZone: 'Выберите аудиофайлы', uploadCancel: 'Отмена', uploadConfirm: 'Загрузить', uploading: 'Загрузка',
+    noSection: 'Без раздела',
+    moveTitle: 'Переместить трек', moveLabel: 'ПЕРЕМЕСТИТЬ В РАЗДЕЛ', moveCancel: 'Отмена', moveConfirm: 'Переместить',
+    toastSaved: 'Сохранено ✓', toastDeleted: 'Удалено', toastUploaded: 'Загружено ✓', toastMoved: 'Перемещено ✓',
+    infoTitle: 'О приложении',
+    infoBody: '<p style="font-size:14px;line-height:1.8;color:var(--txt2)"><strong style="color:var(--txt)">АудиоГид</strong> — аудиопутеводитель для путешественников. Создавайте папки, разделы по дням, загружайте аудиофайлы.</p><br><p style="font-size:13px;color:var(--txt3);line-height:1.7">Для управления войдите через кнопку ⚙ в правом верхнем углу.</p>'
   },
-  en:{
-    eyebrow:'Travel Audio',appTitle:'Audio<em>Guide</em>',
-    tabLib:'Guides',tabInfo:'About',
-    noFolders:'No folders yet',noFoldersDesc:'Log in as admin to create folders and upload audio guides.',
-    noTracks:'No tracks yet',playerIdle:'Select a track',playerIdleSub:'Tap any track to start',
-    trS:'track',trF:'tracks',trM:'tracks',
-    loginTitle:'Admin Login',loginLabel:'PASSWORD',loginCancel:'Cancel',loginOk:'Login',loginErr:'Wrong password',
-    adminTitle:'Admin Panel',
-    driveInfo:'<strong>Google Drive:</strong> create a folder, share it publicly, paste the folder ID from the URL.',
-    driveFolderLabel:'GOOGLE DRIVE FOLDER ID',driveApiLabel:'GOOGLE API KEY',
-    driveSave:'Save',driveOk:'✓ Drive connected',driveErr:'Error — check your keys',
-    foldersLabel:'FOLDERS',newFolder:'+ New',logout:'Logout',close:'Close',
-    folderTitleNew:'New Folder',folderTitleEdit:'Rename Folder',folderLabel:'FOLDER NAME',folderCancel:'Cancel',folderSave:'Save',
-    dayTitleNew:'New Section',dayTitleEdit:'Rename Section',
-    dayNumLabel:'DAY NUMBER (optional)',dayNameLabel:'SECTION NAME',
-    dayCancel:'Cancel',daySave:'Save',addDay:'+ Section',
-    uploadTitle:'Upload Tracks',uploadDayLabel:'ADD TO SECTION',
-    uploadZone:'Choose audio files',uploadCancel:'Cancel',uploadConfirm:'Upload',uploading:'Uploading',
-    noSection:'No section',
-    moveTitle:'Move Track',moveLabel:'MOVE TO SECTION',moveCancel:'Cancel',moveConfirm:'Move',
-    toastSaved:'Saved ✓',toastDeleted:'Deleted',toastUploaded:'Uploaded ✓',toastMoved:'Moved ✓',
-    infoTitle:'About',
-    infoBody:'<p style="font-size:14px;line-height:1.8;color:var(--txt2)"><strong style="color:var(--txt)">AudioGuide</strong> is your personal travel audio companion.<br>Create folders, sections (by day or theme), and upload audio files.</p><br><p style="font-size:13px;color:var(--txt3);line-height:1.7">To manage content, log in via the ⚙ button in the top right.</p>',
+  en: {
+    eyebrow: 'Travel Audio', appTitle: 'Audio<em>Guide</em>',
+    tabLib: 'Guides', tabInfo: 'About',
+    noFolders: 'No folders yet', noFoldersDesc: 'Log in as admin to create folders and upload audio guides.',
+    noTracks: 'No tracks yet', playerIdle: 'Select a track', playerIdleSub: 'Tap any track to start',
+    trS: 'track', trF: 'tracks', trM: 'tracks',
+    loginTitle: 'Admin Login', loginLabel: 'PASSWORD', loginCancel: 'Cancel', loginOk: 'Login', loginErr: 'Wrong password',
+    adminTitle: 'Admin Panel',
+    driveInfo: 'Connect Google Drive to share files with all users.',
+    driveFolderLabel: 'GOOGLE DRIVE FOLDER ID', driveApiLabel: 'GOOGLE API KEY',
+    driveSave: 'Save', driveOk: '✓ Drive connected', driveErr: 'Error — check your keys',
+    foldersLabel: 'FOLDERS', newFolder: '+ New', logout: 'Logout', close: 'Close',
+    folderTitleNew: 'New Folder', folderTitleEdit: 'Rename Folder', folderLabel: 'FOLDER NAME', folderCancel: 'Cancel', folderSave: 'Save',
+    dayTitleNew: 'New Section', dayTitleEdit: 'Rename Section',
+    dayNumLabel: 'DAY NUMBER (optional)', dayNameLabel: 'SECTION NAME',
+    dayCancel: 'Cancel', daySave: 'Save', addDay: 'Section',
+    uploadTitle: 'Upload Tracks', uploadDayLabel: 'ADD TO SECTION',
+    uploadZone: 'Choose audio files', uploadCancel: 'Cancel', uploadConfirm: 'Upload', uploading: 'Uploading',
+    noSection: 'No section',
+    moveTitle: 'Move Track', moveLabel: 'MOVE TO SECTION', moveCancel: 'Cancel', moveConfirm: 'Move',
+    toastSaved: 'Saved ✓', toastDeleted: 'Deleted', toastUploaded: 'Uploaded ✓', toastMoved: 'Moved ✓',
+    infoTitle: 'About',
+    infoBody: '<p style="font-size:14px;line-height:1.8;color:var(--txt2)"><strong style="color:var(--txt)">AudioGuide</strong> is your personal travel audio companion. Create folders, day sections, and upload audio files.</p><br><p style="font-size:13px;color:var(--txt3);line-height:1.7">To manage content, log in via the gear button in the top right.</p>'
   }
 };
-const t=k=>T[lang][k]??k;
 
-function trCount(n){
-  if(lang==='en') return n+' '+(n===1?t('trS'):t('trM'));
-  const m=n%10,h=n%100;
-  if(m===1&&h!==11) return n+' '+t('trS');
-  if([2,3,4].includes(m)&&![12,13,14].includes(h)) return n+' '+t('trF');
-  return n+' '+t('trM');
+function t(k) { return (T[lang] && T[lang][k] !== undefined) ? T[lang][k] : k; }
+
+function trCount(n) {
+  if (lang === 'en') return n + ' ' + (n === 1 ? t('trS') : t('trM'));
+  var m = n % 10, h = n % 100;
+  if (m === 1 && h !== 11) return n + ' ' + t('trS');
+  if (m >= 2 && m <= 4 && (h < 10 || h >= 20)) return n + ' ' + t('trF');
+  return n + ' ' + t('trM');
 }
 
-// ═══ LANG ═════════════════════════════════════════════════════
-function toggleLang(){ lang=lang==='ru'?'en':'ru'; localStorage.setItem('ag_lang',lang); applyLang(); renderMain(); }
-function applyLang(){
-  const L=id=>document.getElementById(id);
-  L('eyebrow').textContent=t('eyebrow');
-  L('appTitle').innerHTML=t('appTitle');
-  L('langBtn').textContent=lang==='ru'?'EN':'RU';
-  L('tabLib').textContent=t('tabLib');
-  L('tabInfo').textContent=t('tabInfo');
-  L('mLoginTitle').textContent=t('loginTitle');
-  L('mLoginLabel').textContent=t('loginLabel');
-  L('mLoginCancel').textContent=t('loginCancel');
-  L('mLoginOk').textContent=t('loginOk');
-  L('mAdminTitle').textContent=t('adminTitle');
-  L('driveInfoBox').innerHTML=t('driveInfo');
-  L('mDriveFolderLabel').textContent=t('driveFolderLabel');
-  L('mDriveApiLabel').textContent=t('driveApiLabel');
-  L('mDriveSave').textContent=t('driveSave');
-  L('mFoldersLabel').textContent=t('foldersLabel');
-  L('mNewFolder').textContent=t('newFolder');
-  L('mLogout').textContent=t('logout');
-  L('mClose').textContent=t('close');
-  L('mFolderLabel').textContent=t('folderLabel');
-  L('mFolderCancel').textContent=t('folderCancel');
-  L('mFolderSave').textContent=t('folderSave');
-  L('mDayNumLabel').textContent=t('dayNumLabel');
-  L('mDayNameLabel').textContent=t('dayNameLabel');
-  L('mDayCancel').textContent=t('dayCancel');
-  L('mDaySave').textContent=t('daySave');
-  L('mUploadTitle').textContent=t('uploadTitle');
-  L('mUploadDayLabel').textContent=t('uploadDayLabel');
-  L('mUploadZoneLabel').textContent=t('uploadZone');
-  L('mUploadCancel').textContent=t('uploadCancel');
-  L('mUploadConfirm').textContent=t('uploadConfirm');
-  L('mMoveTitle').textContent=t('moveTitle');
-  L('mMoveLabel').textContent=t('moveLabel');
-  L('mMoveCancel').textContent=t('moveCancel');
-  L('mMoveConfirm').textContent=t('moveConfirm');
-  if(curIdx<0){ L('pTitle').textContent=t('playerIdle'); L('pSub').textContent=t('playerIdleSub'); L('pSub').className='player-sub'; }
+function toggleLang() {
+  lang = lang === 'ru' ? 'en' : 'ru';
+  localStorage.setItem('ag_lang', lang);
+  applyLang();
+  renderMain();
 }
 
-// ═══ TABS ═════════════════════════════════════════════════════
-function showTab(tab){ currentTab=tab; document.getElementById('tabLib').classList.toggle('active',tab==='lib'); document.getElementById('tabInfo').classList.toggle('active',tab==='info'); renderMain(); }
-function renderMain(){ currentTab==='lib'?renderLibrary():renderInfo(); }
+function applyLang() {
+  function L(id) { return document.getElementById(id); }
+  L('eyebrow').textContent = t('eyebrow');
+  L('appTitle').innerHTML = t('appTitle');
+  L('langBtn').textContent = lang === 'ru' ? 'EN' : 'RU';
+  L('tabLib').textContent = t('tabLib');
+  L('tabInfo').textContent = t('tabInfo');
+  L('mLoginTitle').textContent = t('loginTitle');
+  L('mLoginLabel').textContent = t('loginLabel');
+  L('mLoginCancel').textContent = t('loginCancel');
+  L('mLoginOk').textContent = t('loginOk');
+  L('mAdminTitle').textContent = t('adminTitle');
+  L('driveInfoBox').textContent = t('driveInfo');
+  L('mDriveFolderLabel').textContent = t('driveFolderLabel');
+  L('mDriveApiLabel').textContent = t('driveApiLabel');
+  L('mDriveSave').textContent = t('driveSave');
+  L('mFoldersLabel').textContent = t('foldersLabel');
+  L('mNewFolder').textContent = t('newFolder');
+  L('mLogout').textContent = t('logout');
+  L('mClose').textContent = t('close');
+  L('mFolderLabel').textContent = t('folderLabel');
+  L('mFolderCancel').textContent = t('folderCancel');
+  L('mFolderSave').textContent = t('folderSave');
+  L('mDayNumLabel').textContent = t('dayNumLabel');
+  L('mDayNameLabel').textContent = t('dayNameLabel');
+  L('mDayCancel').textContent = t('dayCancel');
+  L('mDaySave').textContent = t('daySave');
+  L('mUploadTitle').textContent = t('uploadTitle');
+  L('mUploadDayLabel').textContent = t('uploadDayLabel');
+  L('mUploadZoneLabel').textContent = t('uploadZone');
+  L('mUploadCancel').textContent = t('uploadCancel');
+  L('mUploadConfirm').textContent = t('uploadConfirm');
+  L('mMoveTitle').textContent = t('moveTitle');
+  L('mMoveLabel').textContent = t('moveLabel');
+  L('mMoveCancel').textContent = t('moveCancel');
+  L('mMoveConfirm').textContent = t('moveConfirm');
+  if (curIdx < 0) {
+    L('pTitle').textContent = t('playerIdle');
+    L('pSub').textContent = t('playerIdleSub');
+    L('pSub').className = 'p-sub';
+  }
+}
 
-// ═══ LIBRARY RENDER ═══════════════════════════════════════════
-function renderLibrary(){
-  const el=document.getElementById('mainContent');
-  if(!folders.length){
-    el.innerHTML=`<div class="empty"><div class="empty-icon">🗺️</div><h3>${t('noFolders')}</h3><p>${t('noFoldersDesc')}</p></div>`;
+function showTab(tab) {
+  currentTab = tab;
+  document.getElementById('tabLib').classList.toggle('active', tab === 'lib');
+  document.getElementById('tabInfo').classList.toggle('active', tab === 'info');
+  renderMain();
+}
+function renderMain() { currentTab === 'lib' ? renderLibrary() : renderInfo(); }
+
+function renderLibrary() {
+  var el = document.getElementById('mainContent');
+  if (!folders.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">&#128506;</div><h3>' + t('noFolders') + '</h3><p>' + t('noFoldersDesc') + '</p></div>';
     return;
   }
-  let html='';
-  folders.forEach(folder=>{
-    const open=folder._open;
-    const days=folder.days||[];
-    const rootTracks=folder.tracks||[];
-    const totalTracks=days.reduce((s,d)=>s+(d.tracks||[]).length,0)+rootTracks.length;
-    html+=`<div class="folder-card ${open?'open':''}">
-      <div class="folder-head" onclick="toggleFolder('${folder.id}')">
-        <span class="folder-arrow">▶</span>
-        <span class="folder-icon">📁</span>
-        <div class="folder-info">
-          <div class="folder-name">${esc(folder.name)}</div>
-          <div class="folder-meta">${days.length?days.length+' '+(lang==='ru'?'разд.':'sec.')+' · ':''} ${trCount(totalTracks)}</div>
-        </div>
-        ${isAdmin?`<div class="folder-admin-btns" onclick="event.stopPropagation()">
-          <button class="sm-btn" title="${t('addDay')}" onclick="openDayModal('${folder.id}',null)">📅</button>
-          <button class="sm-btn" title="Upload" onclick="openUploadModal('${folder.id}',null)">＋</button>
-          <button class="sm-btn" title="Rename" onclick="openFolderModal('${folder.id}')">✎</button>
-          <button class="sm-btn danger" title="Delete" onclick="deleteFolder('${folder.id}')">✕</button>
-        </div>`:''}
-      </div>`;
-
-    if(open){
-      html+=`<div class="folder-body">`;
-
-      // Render day sections
-      days.forEach(day=>{
-        const dayOpen=day._open;
-        const tracks=day.tracks||[];
-        const label=day.num?(lang==='ru'?`День ${day.num}`:`Day ${day.num}`):'';
-        html+=`<div class="day-section ${dayOpen?'open':''}">
-          <div class="day-head" onclick="toggleDay('${folder.id}','${day.id}')">
-            <span class="day-arrow">▶</span>
-            ${label?`<span class="day-pill">${label}</span>`:''}
-            <span class="day-name">${esc(day.name)}</span>
-            <span class="day-meta">${trCount(tracks.length)}</span>
-            ${isAdmin?`<div class="day-admin-btns" onclick="event.stopPropagation()">
-              <button class="sm-btn" onclick="openUploadModal('${folder.id}','${day.id}')">＋</button>
-              <button class="sm-btn" onclick="openDayModal('${folder.id}','${day.id}')">✎</button>
-              <button class="sm-btn danger" onclick="deleteDay('${folder.id}','${day.id}')">✕</button>
-            </div>`:''}
-          </div>`;
-        if(dayOpen){
-          html+=`<div class="track-list">`;
-          if(!tracks.length){
-            html+=`<div style="padding:6px 4px;font-size:12px;color:var(--txt3)">${t('noTracks')}</div>`;
+  var html = '';
+  folders.forEach(function(folder) {
+    var days = folder.days || [];
+    var rootTracks = folder.tracks || [];
+    var totalTracks = rootTracks.length + days.reduce(function(s, d) { return s + (d.tracks || []).length; }, 0);
+    var metaStr = (days.length ? days.length + ' ' + (lang === 'ru' ? 'разд.' : 'sec.') + ' · ' : '') + trCount(totalTracks);
+    html += '<div class="folder-card' + (folder._open ? ' open' : '') + '">';
+    html += '<div class="folder-head" onclick="toggleFolder(\'' + folder.id + '\')">';
+    html += '<span class="f-arrow">&#9658;</span>';
+    html += '<span class="folder-icon">&#128193;</span>';
+    html += '<div class="folder-info"><div class="folder-name">' + esc(folder.name) + '</div><div class="folder-meta">' + metaStr + '</div></div>';
+    if (isAdmin) {
+      html += '<div class="f-admin" onclick="event.stopPropagation()">';
+      html += '<button class="sm-btn" title="' + t('addDay') + '" onclick="openDayModal(\'' + folder.id + '\',null)">&#128197;</button>';
+      html += '<button class="sm-btn" title="Upload" onclick="openUploadModal(\'' + folder.id + '\',null)">&#65291;</button>';
+      html += '<button class="sm-btn" onclick="openFolderModal(\'' + folder.id + '\')">&#9999;</button>';
+      html += '<button class="sm-btn danger" onclick="deleteFolder(\'' + folder.id + '\')">&#10005;</button>';
+      html += '</div>';
+    }
+    html += '</div>';
+    if (folder._open) {
+      html += '<div class="folder-body">';
+      days.forEach(function(day) {
+        var dtracks = day.tracks || [];
+        var pill = day.num ? ('<span class="day-pill">' + (lang === 'ru' ? 'День ' : 'Day ') + day.num + '</span>') : '';
+        html += '<div class="day-card' + (day._open ? ' open' : '') + '">';
+        html += '<div class="day-head" onclick="toggleDay(\'' + folder.id + '\',\'' + day.id + '\')">';
+        html += '<span class="d-arrow">&#9658;</span>' + pill;
+        html += '<span class="day-name-el">' + esc(day.name) + '</span>';
+        html += '<span class="day-meta">' + trCount(dtracks.length) + '</span>';
+        if (isAdmin) {
+          html += '<div class="d-admin" onclick="event.stopPropagation()">';
+          html += '<button class="sm-btn" onclick="openUploadModal(\'' + folder.id + '\',\'' + day.id + '\')">&#65291;</button>';
+          html += '<button class="sm-btn" onclick="openDayModal(\'' + folder.id + '\',\'' + day.id + '\')">&#9999;</button>';
+          html += '<button class="sm-btn danger" onclick="deleteDay(\'' + folder.id + '\',\'' + day.id + '\')">&#10005;</button>';
+          html += '</div>';
+        }
+        html += '</div>';
+        if (day._open) {
+          html += '<div class="track-list">';
+          if (!dtracks.length) {
+            html += '<div style="padding:6px 4px;font-size:12px;color:var(--txt3)">' + t('noTracks') + '</div>';
           } else {
-            tracks.forEach((tr,i)=>{
-              const playing=curFolderId===folder.id&&curDayId===day.id&&curIdx===i&&isPlaying;
-              html+=renderTrackItem(tr,i,playing,folder.id,day.id);
+            dtracks.forEach(function(tr, i) {
+              html += renderTrack(tr, i, folder.id, day.id);
             });
           }
-          html+=`</div>`;
+          html += '</div>';
         }
-        html+=`</div>`;
+        html += '</div>';
       });
-
-      // Root-level tracks (no section)
-      if(rootTracks.length){
-        if(days.length){
-          html+=`<div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);padding:8px 4px 4px">${t('noSection')}</div>`;
-        }
-        html+=`<div class="track-list">`;
-        rootTracks.forEach((tr,i)=>{
-          const playing=curFolderId===folder.id&&curDayId===null&&curIdx===i&&isPlaying;
-          html+=renderTrackItem(tr,i,playing,folder.id,null);
-        });
-        html+=`</div>`;
+      if (rootTracks.length) {
+        if (days.length) html += '<div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt3);padding:8px 4px 4px">' + t('noSection') + '</div>';
+        html += '<div class="track-list">';
+        rootTracks.forEach(function(tr, i) { html += renderTrack(tr, i, folder.id, null); });
+        html += '</div>';
       }
-
-      html+=`</div>`; // folder-body
+      html += '</div>';
     }
-    html+=`</div>`;
+    html += '</div>';
   });
-  el.innerHTML=html;
+  el.innerHTML = html;
 }
 
-function renderTrackItem(tr,i,playing,folderId,dayId){
-  const dayParam=dayId?`'${dayId}'`:'null';
-  return `<div class="track-item ${playing?'playing':''}" onclick="playTrack('${folderId}',${dayParam},${i})">
-    <span class="track-num">${i+1}</span>
-    <div class="track-thumb">${playing?'<div class="eq"><span></span><span></span><span></span></div>':'🎧'}</div>
-    <span class="track-name">${esc(tr.name)}</span>
-    <span class="track-dur">${tr.duration||''}</span>
-    ${isAdmin?`<button class="track-del" onclick="event.stopPropagation();openMoveModal('${folderId}',${dayParam},'${tr.id}')" title="Move">⇄</button>
-               <button class="track-del" onclick="event.stopPropagation();deleteTrack('${folderId}',${dayParam},'${tr.id}')">✕</button>`:''}
-  </div>`;
+function renderTrack(tr, i, folderId, dayId) {
+  var playing = curFolderId === folderId && curDayId === dayId && curIdx === i && isPlaying;
+  var dayParam = dayId ? "'" + dayId + "'" : 'null';
+  var thumb = playing ? '<div class="eq"><span></span><span></span><span></span></div>' : '&#127911;';
+  var html = '<div class="track-item' + (playing ? ' playing' : '') + '" onclick="playTrack(\'' + folderId + '\',' + dayParam + ',' + i + ')">';
+  html += '<span class="t-num">' + (i + 1) + '</span>';
+  html += '<div class="t-thumb">' + thumb + '</div>';
+  html += '<span class="t-name">' + esc(tr.name) + '</span>';
+  html += '<span class="t-dur">' + (tr.duration || '') + '</span>';
+  if (isAdmin) {
+    html += '<button class="t-del" onclick="event.stopPropagation();openMoveModal(\'' + folderId + '\',' + dayParam + ',\'' + tr.id + '\')" title="Move">&#8644;</button>';
+    html += '<button class="t-del" onclick="event.stopPropagation();deleteTrack(\'' + folderId + '\',' + dayParam + ',\'' + tr.id + '\')">&#10005;</button>';
+  }
+  html += '</div>';
+  return html;
 }
 
-function toggleFolder(id){ const f=folders.find(x=>x.id===id); if(f){f._open=!f._open;saveFolders();renderLibrary();} }
-function toggleDay(folderId,dayId){ const f=folders.find(x=>x.id===folderId); if(!f)return; const d=(f.days||[]).find(x=>x.id===dayId); if(d){d._open=!d._open;saveFolders();renderLibrary();} }
-
-function renderInfo(){
-  document.getElementById('mainContent').innerHTML=`<div style="padding:8px 0">
-    <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-style:italic;color:var(--gold2);margin-bottom:16px">${t('infoTitle')}</div>
-    ${t('infoBody')}</div>`;
+function toggleFolder(id) {
+  var f = folders.find(function(x) { return x.id === id; });
+  if (f) { f._open = !f._open; saveFolders(); renderLibrary(); }
+}
+function toggleDay(folderId, dayId) {
+  var f = folders.find(function(x) { return x.id === folderId; });
+  if (!f) return;
+  var d = (f.days || []).find(function(x) { return x.id === dayId; });
+  if (d) { d._open = !d._open; saveFolders(); renderLibrary(); }
 }
 
-// ═══ AUDIO ════════════════════════════════════════════════════
-const audio=document.getElementById('audio');
-
-function getTrackList(folderId,dayId){
-  const folder=folders.find(f=>f.id===folderId);
-  if(!folder)return[];
-  if(dayId){ const day=(folder.days||[]).find(d=>d.id===dayId); return day?day.tracks||[]:[];}
-  return folder.tracks||[];
+function renderInfo() {
+  document.getElementById('mainContent').innerHTML =
+    '<div style="padding:8px 0"><div style="font-family:\'Cormorant Garamond\',serif;font-size:26px;font-style:italic;color:var(--gold2);margin-bottom:16px">' +
+    t('infoTitle') + '</div>' + t('infoBody') + '</div>';
 }
 
-async function playTrack(folderId,dayId,idx){
-  const list=getTrackList(folderId,dayId);
-  if(!list[idx])return;
-  curFolderId=folderId;curDayId=dayId;curIdx=idx;curPlaylist=list;
-  const tr=list[idx];
-  let src;
-  if(tr.blobId){const b=await getBlob(tr.blobId);if(b)src=URL.createObjectURL(b);}
-  else if(tr.url)src=tr.url;
-  if(!src)return;
-  audio.src=src;audio.play();isPlaying=true;
-  const folder=folders.find(f=>f.id===folderId);
-  const day=dayId?(folder?.days||[]).find(d=>d.id===dayId):null;
-  document.getElementById('pTitle').textContent=tr.name;
-  const sub=day?(day.num?(lang==='ru'?`День ${day.num} · `:` Day ${day.num} · `):'')+day.name:folder?.name||'';
-  document.getElementById('pSub').textContent='📁 '+sub;
-  document.getElementById('pSub').className='player-sub on';
-  renderLibrary();
+// AUDIO
+var audio = document.getElementById('audio');
+
+function getList(folderId, dayId) {
+  var folder = folders.find(function(f) { return f.id === folderId; });
+  if (!folder) return [];
+  if (dayId) {
+    var day = (folder.days || []).find(function(d) { return d.id === dayId; });
+    return day ? (day.tracks || []) : [];
+  }
+  return folder.tracks || [];
 }
 
-function togglePlay(){
-  if(curIdx<0){
-    const f=folders.find(x=>(x.days&&x.days.some(d=>d.tracks&&d.tracks.length))||(x.tracks&&x.tracks.length));
-    if(f){
-      if(f.days&&f.days.length&&f.days[0].tracks&&f.days[0].tracks.length){playTrack(f.id,f.days[0].id,0);return;}
-      if(f.tracks&&f.tracks.length){playTrack(f.id,null,0);return;}
+function playTrack(folderId, dayId, idx) {
+  var list = getList(folderId, dayId);
+  if (!list[idx]) return;
+  curFolderId = folderId; curDayId = dayId; curIdx = idx; curPlaylist = list;
+  var tr = list[idx];
+  var folder = folders.find(function(f) { return f.id === folderId; });
+  var day = dayId ? (folder ? (folder.days || []).find(function(d) { return d.id === dayId; }) : null) : null;
+  var getSource = tr.blobId ? getBlob(tr.blobId) : Promise.resolve(null);
+  getSource.then(function(blob) {
+    var src = blob ? URL.createObjectURL(blob) : (tr.url || null);
+    if (!src) return;
+    audio.src = src;
+    audio.play();
+    isPlaying = true;
+    document.getElementById('pTitle').textContent = tr.name;
+    var sub = day ? ((day.num ? (lang === 'ru' ? 'День ' : 'Day ') + day.num + ' — ' : '') + day.name) : (folder ? folder.name : '');
+    document.getElementById('pSub').textContent = '&#128193; ' + sub;
+    document.getElementById('pSub').className = 'p-sub on';
+    renderLibrary();
+  });
+}
+
+function togglePlay() {
+  if (curIdx < 0) {
+    var f = folders.find(function(x) { return (x.days && x.days.some(function(d) { return d.tracks && d.tracks.length; })) || (x.tracks && x.tracks.length); });
+    if (f) {
+      if (f.days && f.days.length && f.days[0].tracks && f.days[0].tracks.length) { playTrack(f.id, f.days[0].id, 0); return; }
+      if (f.tracks && f.tracks.length) { playTrack(f.id, null, 0); return; }
     }
   }
-  if(audio.paused){audio.play();isPlaying=true;}else{audio.pause();isPlaying=false;}
-  document.getElementById('playBtn').textContent=isPlaying?'⏸':'▶';
+  if (audio.paused) { audio.play(); isPlaying = true; } else { audio.pause(); isPlaying = false; }
+  document.getElementById('playBtn').innerHTML = isPlaying ? '&#9646;&#9646;' : '&#9654;';
   renderLibrary();
 }
 
-function skipTrack(dir){
-  if(!curPlaylist.length)return;
-  playTrack(curFolderId,curDayId,(curIdx+dir+curPlaylist.length)%curPlaylist.length);
+function skipTrack(dir) {
+  if (!curPlaylist.length) return;
+  var next = (curIdx + dir + curPlaylist.length) % curPlaylist.length;
+  playTrack(curFolderId, curDayId, next);
 }
 
-function seekAudio(e){ if(!audio.duration)return; const r=e.currentTarget.getBoundingClientRect(); audio.currentTime=((e.clientX-r.left)/r.width)*audio.duration; }
+function seekAudio(e) {
+  if (!audio.duration) return;
+  var r = e.currentTarget.getBoundingClientRect();
+  audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
+}
 
-audio.addEventListener('timeupdate',()=>{
-  const p=audio.duration?(audio.currentTime/audio.duration*100):0;
-  document.getElementById('progFill').style.width=p+'%';
-  document.getElementById('tCur').textContent=fmt(audio.currentTime);
-  document.getElementById('tTot').textContent=fmt(audio.duration);
+audio.addEventListener('timeupdate', function() {
+  var p = audio.duration ? (audio.currentTime / audio.duration * 100) : 0;
+  document.getElementById('progFill').style.width = p + '%';
+  document.getElementById('tCur').textContent = fmt(audio.currentTime);
+  document.getElementById('tTot').textContent = fmt(audio.duration);
 });
-audio.addEventListener('ended',()=>skipTrack(1));
-audio.addEventListener('play',()=>{isPlaying=true;document.getElementById('playBtn').textContent='⏸';renderLibrary();});
-audio.addEventListener('pause',()=>{isPlaying=false;document.getElementById('playBtn').textContent='▶';renderLibrary();});
+audio.addEventListener('ended', function() { skipTrack(1); });
+audio.addEventListener('play', function() { isPlaying = true; document.getElementById('playBtn').innerHTML = '&#9646;&#9646;'; renderLibrary(); });
+audio.addEventListener('pause', function() { isPlaying = false; document.getElementById('playBtn').innerHTML = '&#9654;'; renderLibrary(); });
 
-function fmt(s){if(!s||isNaN(s))return'0:00';return`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;}
+function fmt(s) { if (!s || isNaN(s)) return '0:00'; return Math.floor(s / 60) + ':' + ('0' + Math.floor(s % 60)).slice(-2); }
 
-// ═══ AUTH ═════════════════════════════════════════════════════
-function openAdminModal(){ if(isAdmin){openAdminPanel();return;} openOv('ovLogin'); setTimeout(()=>document.getElementById('loginInput').focus(),300); }
-function doLogin(){
-  const pass=document.getElementById('loginInput').value;
-  const stored=localStorage.getItem('ag_adminpass')||'admin123';
-  if(pass===stored){isAdmin=true;closeOv('ovLogin');document.getElementById('loginInput').value='';document.getElementById('loginErr').style.display='none';openAdminPanel();renderLibrary();}
-  else{const e=document.getElementById('loginErr');e.textContent=t('loginErr');e.style.display='block';}
+// AUTH
+function openAdminModal() { if (isAdmin) { openAdminPanel(); return; } openOv('ovLogin'); setTimeout(function() { document.getElementById('loginInput').focus(); }, 300); }
+function doLogin() {
+  var pass = document.getElementById('loginInput').value;
+  var stored = localStorage.getItem('ag_adminpass') || 'admin123';
+  if (pass === stored) {
+    isAdmin = true; closeOv('ovLogin'); document.getElementById('loginInput').value = '';
+    document.getElementById('loginErr').style.display = 'none'; openAdminPanel(); renderLibrary();
+  } else {
+    var e = document.getElementById('loginErr'); e.textContent = t('loginErr'); e.style.display = 'block';
+  }
 }
-function doLogout(){isAdmin=false;closeOv('ovAdmin');renderLibrary();}
+function doLogout() { isAdmin = false; closeOv('ovAdmin'); renderLibrary(); }
 
-// ═══ ADMIN ════════════════════════════════════════════════════
-function openAdminPanel(){
-  document.getElementById('driveFolderInput').value=driveConfig.folderId||'';
-  document.getElementById('driveApiInput').value=driveConfig.apiKey||'';
-  document.getElementById('driveStatus').textContent='';
+// ADMIN PANEL
+function openAdminPanel() {
+  document.getElementById('driveFolderInput').value = driveConfig.folderId || '';
+  document.getElementById('driveApiInput').value = driveConfig.apiKey || '';
+  document.getElementById('driveStatus').textContent = '';
   renderAdminFolderList();
   openOv('ovAdmin');
 }
-function renderAdminFolderList(){
-  const el=document.getElementById('adminFolderList');
-  if(!folders.length){el.innerHTML=`<div style="font-size:13px;color:var(--txt3);padding:4px 0">${t('noFolders')}</div>`;return;}
-  el.innerHTML=folders.map(f=>`
-    <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">
-      <span>📁</span><span style="flex:1;font-size:13px">${esc(f.name)}</span>
-      <span style="font-size:11px;color:var(--txt3)">${(f.days||[]).length}s · ${trCount((f.tracks||[]).length+(f.days||[]).reduce((s,d)=>s+(d.tracks||[]).length,0))}</span>
-      <button class="sm-btn" onclick="openUploadModal('${f.id}',null);closeOv('ovAdmin')">＋</button>
-      <button class="sm-btn" onclick="openFolderModal('${f.id}');closeOv('ovAdmin')">✎</button>
-      <button class="sm-btn danger" onclick="deleteFolder('${f.id}');renderAdminFolderList()">✕</button>
-    </div>`).join('');
+function renderAdminFolderList() {
+  var el = document.getElementById('adminFolderList');
+  if (!folders.length) { el.innerHTML = '<div style="font-size:13px;color:var(--txt3);padding:4px 0">' + t('noFolders') + '</div>'; return; }
+  el.innerHTML = folders.map(function(f) {
+    var tc = (f.tracks || []).length + (f.days || []).reduce(function(s, d) { return s + (d.tracks || []).length; }, 0);
+    return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">' +
+      '<span>&#128193;</span><span style="flex:1;font-size:13px">' + esc(f.name) + '</span>' +
+      '<span style="font-size:11px;color:var(--txt3)">' + (f.days || []).length + 's · ' + trCount(tc) + '</span>' +
+      '<button class="sm-btn" onclick="openUploadModal(\'' + f.id + '\',null);closeOv(\'ovAdmin\')">&#65291;</button>' +
+      '<button class="sm-btn" onclick="openFolderModal(\'' + f.id + '\');closeOv(\'ovAdmin\')">&#9999;</button>' +
+      '<button class="sm-btn danger" onclick="deleteFolder(\'' + f.id + '\');renderAdminFolderList()">&#10005;</button>' +
+      '</div>';
+  }).join('');
 }
 
-// ═══ DRIVE ════════════════════════════════════════════════════
-async function saveDrive(){
-  driveConfig.folderId=document.getElementById('driveFolderInput').value.trim();
-  driveConfig.apiKey=document.getElementById('driveApiInput').value.trim();
-  localStorage.setItem('ag_drive',JSON.stringify(driveConfig));
-  const st=document.getElementById('driveStatus');
-  st.innerHTML=`<span class="spin"></span> Connecting...`;st.style.color='var(--txt3)';
-  const ok=await syncFromDrive();
-  if(ok){st.textContent=t('driveOk');st.style.color='var(--green)';showToast(t('driveOk'));renderLibrary();renderAdminFolderList();}
-  else{st.textContent=t('driveErr');st.style.color='var(--red)';}
+// DRIVE
+function saveDrive() {
+  driveConfig.folderId = document.getElementById('driveFolderInput').value.trim();
+  driveConfig.apiKey = document.getElementById('driveApiInput').value.trim();
+  localStorage.setItem('ag_drive', JSON.stringify(driveConfig));
+  var st = document.getElementById('driveStatus');
+  st.innerHTML = '<span class="spin"></span> Connecting...'; st.style.color = 'var(--txt3)';
+  syncFromDrive().then(function(ok) {
+    if (ok) { st.textContent = t('driveOk'); st.style.color = 'var(--green)'; showToast(t('driveOk')); renderLibrary(); renderAdminFolderList(); }
+    else { st.textContent = t('driveErr'); st.style.color = 'var(--red)'; }
+  });
 }
-async function refreshDrive(){
-  const st=document.getElementById('driveStatus');
-  st.innerHTML=`<span class="spin"></span> Syncing...`;st.style.color='var(--txt3)';
-  const ok=await syncFromDrive();
-  if(ok){st.textContent=t('driveOk');st.style.color='var(--green)';showToast(t('driveOk'));renderLibrary();renderAdminFolderList();}
-  else{st.textContent=t('driveErr');st.style.color='var(--red)';}
+function refreshDrive() {
+  var st = document.getElementById('driveStatus');
+  st.innerHTML = '<span class="spin"></span> Syncing...'; st.style.color = 'var(--txt3)';
+  syncFromDrive().then(function(ok) {
+    if (ok) { st.textContent = t('driveOk'); st.style.color = 'var(--green)'; showToast(t('driveOk')); renderLibrary(); renderAdminFolderList(); }
+    else { st.textContent = t('driveErr'); st.style.color = 'var(--red)'; }
+  });
 }
-async function syncFromDrive(){
-  if(!driveConfig.folderId||!driveConfig.apiKey)return false;
-  const key=driveConfig.apiKey,rootId=driveConfig.folderId;
-  const BASE='https://www.googleapis.com/drive/v3/files';
-  try{
-    const subRes=await fetch(`${BASE}?q='${rootId}'+in+parents+and+mimeType='application/vnd.google-apps.folder'+and+trashed=false&fields=files(id,name,createdTime)&orderBy=createdTime&key=${key}`);
-    if(!subRes.ok)return false;
-    const subData=await subRes.json();
-    const driveFolders=subData.files||[];
-    const rootFilesRes=await fetch(`${BASE}?q='${rootId}'+in+parents+and+mimeType+contains+'audio/'+and+trashed=false&fields=files(id,name,createdTime)&orderBy=createdTime&key=${key}`);
-    const rootFiles=rootFilesRes.ok?(await rootFilesRes.json()).files||[]:[];
-    const driveEntries=[];
-    for(const sf of driveFolders){
-      const fr=await fetch(`${BASE}?q='${sf.id}'+in+parents+and+mimeType+contains+'audio/'+and+trashed=false&fields=files(id,name,createdTime)&orderBy=createdTime&key=${key}`);
-      if(!fr.ok)continue;
-      const fd=await fr.json();
-      driveEntries.push({name:sf.name,driveId:sf.id,files:fd.files||[]});
-    }
-    if(rootFiles.length) driveEntries.unshift({name:lang==='ru'?'Общие':'General',driveId:rootId,files:rootFiles});
-    if(!driveEntries.length)return true;
-    folders=folders.filter(f=>!f.driveSourced);
-    for(const entry of driveEntries){
-      const tracks=entry.files.map(f=>({id:f.id,name:f.name.replace(/\.[^.]+$/,''),url:`${BASE}/${f.id}?alt=media&key=${key}`,duration:''}));
-      folders.push({id:'drive_'+entry.driveId,name:entry.name,days:[],tracks,_open:false,driveSourced:true});
-    }
-    saveFolders();return true;
-  }catch(e){console.error('Drive sync error:',e);return false;}
+function syncFromDrive() {
+  if (!driveConfig.folderId || !driveConfig.apiKey) return Promise.resolve(false);
+  var key = driveConfig.apiKey, rootId = driveConfig.folderId;
+  var BASE = 'https://www.googleapis.com/drive/v3/files';
+  return fetch(BASE + '?q=%27' + rootId + '%27+in+parents+and+mimeType=%27application/vnd.google-apps.folder%27+and+trashed=false&fields=files(id,name,createdTime)&orderBy=createdTime&key=' + key)
+    .then(function(r) { if (!r.ok) throw new Error('not ok'); return r.json(); })
+    .then(function(subData) {
+      var subFolders = subData.files || [];
+      return fetch(BASE + '?q=%27' + rootId + '%27+in+parents+and+mimeType+contains+%27audio/%27+and+trashed=false&fields=files(id,name,createdTime)&orderBy=createdTime&key=' + key)
+        .then(function(r) { return r.ok ? r.json() : {files:[]}; })
+        .then(function(rootData) {
+          var rootFiles = rootData.files || [];
+          var promises = subFolders.map(function(sf) {
+            return fetch(BASE + '?q=%27' + sf.id + '%27+in+parents+and+mimeType+contains+%27audio/%27+and+trashed=false&fields=files(id,name,createdTime)&orderBy=createdTime&key=' + key)
+              .then(function(r) { return r.ok ? r.json() : {files:[]}; })
+              .then(function(fd) { return {name: sf.name, driveId: sf.id, files: fd.files || []}; });
+          });
+          return Promise.all(promises).then(function(entries) {
+            if (rootFiles.length) entries.unshift({name: lang === 'ru' ? 'Общие' : 'General', driveId: rootId, files: rootFiles});
+            if (!entries.length) return true;
+            folders = folders.filter(function(f) { return !f.driveSourced; });
+            entries.forEach(function(entry) {
+              var tracks = entry.files.map(function(f) {
+                return {id: f.id, name: f.name.replace(/\.[^.]+$/, ''), url: BASE + '/' + f.id + '?alt=media&key=' + key, duration: ''};
+              });
+              folders.push({id: 'drive_' + entry.driveId, name: entry.name, days: [], tracks: tracks, _open: false, driveSourced: true});
+            });
+            saveFolders();
+            return true;
+          });
+        });
+    })
+    .catch(function(e) { console.error('Drive sync error', e); return false; });
 }
-async function maybeAutoSync(){
-  if(driveConfig.folderId&&driveConfig.apiKey){await syncFromDrive();renderMain();}
-}
-
-// ═══ FOLDERS ══════════════════════════════════════════════════
-function openFolderModal(id){
-  editingFolderId=id;
-  document.getElementById('mFolderTitle').textContent=id?t('folderTitleEdit'):t('folderTitleNew');
-  const f=id?folders.find(x=>x.id===id):null;
-  document.getElementById('folderNameInput').value=f?f.name:'';
-  openOv('ovFolder');setTimeout(()=>document.getElementById('folderNameInput').focus(),300);
-}
-function saveFolder(){
-  const name=document.getElementById('folderNameInput').value.trim();
-  if(!name)return;
-  if(editingFolderId){const f=folders.find(x=>x.id===editingFolderId);if(f)f.name=name;}
-  else folders.push({id:uid(),name,days:[],tracks:[],_open:false});
-  saveFolders();closeOv('ovFolder');showToast(t('toastSaved'));renderLibrary();renderAdminFolderList();
-}
-function deleteFolder(id){
-  if(!confirm(lang==='ru'?'Удалить папку?':'Delete folder?'))return;
-  const i=folders.findIndex(x=>x.id===id);if(i>=0)folders.splice(i,1);
-  saveFolders();showToast(t('toastDeleted'));renderLibrary();renderAdminFolderList();
+function maybeAutoSync() {
+  if (driveConfig.folderId && driveConfig.apiKey) {
+    syncFromDrive().then(function() { renderMain(); }).catch(function(e) { console.error(e); });
+  }
 }
 
-// ═══ DAYS ═════════════════════════════════════════════════════
-function openDayModal(folderId,dayId){
-  editingDayFolderId=folderId;editingDayId=dayId;
-  document.getElementById('mDayTitle').textContent=dayId?t('dayTitleEdit'):t('dayTitleNew');
-  const f=folders.find(x=>x.id===folderId);
-  const d=dayId&&f?(f.days||[]).find(x=>x.id===dayId):null;
-  document.getElementById('dayNumInput').value=d?d.num||'':'';
-  document.getElementById('dayNameInput').value=d?d.name:'';
-  openOv('ovDay');setTimeout(()=>document.getElementById('dayNameInput').focus(),300);
+// FOLDERS
+function openFolderModal(id) {
+  editingFolderId = id;
+  document.getElementById('mFolderTitle').textContent = id ? t('folderTitleEdit') : t('folderTitleNew');
+  var f = id ? folders.find(function(x) { return x.id === id; }) : null;
+  document.getElementById('folderNameInput').value = f ? f.name : '';
+  openOv('ovFolder');
+  setTimeout(function() { document.getElementById('folderNameInput').focus(); }, 300);
 }
-function saveDay(){
-  const num=document.getElementById('dayNumInput').value.trim();
-  const name=document.getElementById('dayNameInput').value.trim();
-  if(!name)return;
-  const f=folders.find(x=>x.id===editingDayFolderId);
-  if(!f)return;
-  if(!f.days)f.days=[];
-  if(editingDayId){const d=f.days.find(x=>x.id===editingDayId);if(d){d.num=num;d.name=name;}}
-  else f.days.push({id:uid(),num,name,tracks:[],_open:false});
-  saveFolders();closeOv('ovDay');showToast(t('toastSaved'));renderLibrary();
-}
-function deleteDay(folderId,dayId){
-  if(!confirm(lang==='ru'?'Удалить раздел и треки?':'Delete section and tracks?'))return;
-  const f=folders.find(x=>x.id===folderId);if(!f)return;
-  const i=(f.days||[]).findIndex(x=>x.id===dayId);if(i>=0)f.days.splice(i,1);
-  saveFolders();showToast(t('toastDeleted'));renderLibrary();
-}
-
-// ═══ UPLOAD ═══════════════════════════════════════════════════
-function openUploadModal(folderId,dayId){
-  uploadFolderId=folderId;uploadDayId=dayId;pendingFiles=[];
-  const f=folders.find(x=>x.id===folderId);
-  document.getElementById('uploadTargetLabel').textContent='📁 '+(f?f.name:'');
-  document.getElementById('fileQueue').innerHTML='';
-  document.getElementById('uploadProg').style.display='none';
-  document.getElementById('fileInput').value='';
-  document.getElementById('mUploadConfirm').disabled=false;
-  // Render day selector chips
-  const days=f?f.days||[]:[];
-  const opts=document.getElementById('uploadDayOptions');
-  const selector=document.getElementById('uploadDaySelector');
-  if(days.length){
-    selector.style.display='block';
-    let chips=`<div class="move-option ${!dayId?'selected':''}" style="padding:6px 12px;border-radius:20px;font-size:12px" onclick="selectUploadDay(null,this)">${t('noSection')}</div>`;
-    days.forEach(d=>{
-      const label=(d.num?(lang==='ru'?`День ${d.num} — `:`Day ${d.num} — `:'')+d.name);
-      chips+=`<div class="move-option ${dayId===d.id?'selected':''}" style="padding:6px 12px;border-radius:20px;font-size:12px" onclick="selectUploadDay('${d.id}',this)">${esc(label)}</div>`;
-    });
-    opts.innerHTML=chips;
+function saveFolder() {
+  var name = document.getElementById('folderNameInput').value.trim();
+  if (!name) return;
+  if (editingFolderId) {
+    var f = folders.find(function(x) { return x.id === editingFolderId; });
+    if (f) f.name = name;
   } else {
-    selector.style.display='none';
+    folders.push({id: uid(), name: name, days: [], tracks: [], _open: false});
+  }
+  saveFolders(); closeOv('ovFolder'); showToast(t('toastSaved')); renderLibrary(); renderAdminFolderList();
+}
+function deleteFolder(id) {
+  if (!confirm(lang === 'ru' ? 'Удалить папку?' : 'Delete folder?')) return;
+  var i = folders.findIndex(function(x) { return x.id === id; });
+  if (i >= 0) folders.splice(i, 1);
+  saveFolders(); showToast(t('toastDeleted')); renderLibrary(); renderAdminFolderList();
+}
+
+// DAYS
+function openDayModal(folderId, dayId) {
+  editingDayFolderId = folderId; editingDayId = dayId;
+  document.getElementById('mDayTitle').textContent = dayId ? t('dayTitleEdit') : t('dayTitleNew');
+  var f = folders.find(function(x) { return x.id === folderId; });
+  var d = dayId && f ? (f.days || []).find(function(x) { return x.id === dayId; }) : null;
+  document.getElementById('dayNumInput').value = d ? (d.num || '') : '';
+  document.getElementById('dayNameInput').value = d ? d.name : '';
+  openOv('ovDay');
+  setTimeout(function() { document.getElementById('dayNameInput').focus(); }, 300);
+}
+function saveDay() {
+  var num = document.getElementById('dayNumInput').value.trim();
+  var name = document.getElementById('dayNameInput').value.trim();
+  if (!name) return;
+  var f = folders.find(function(x) { return x.id === editingDayFolderId; });
+  if (!f) return;
+  if (!f.days) f.days = [];
+  if (editingDayId) {
+    var d = f.days.find(function(x) { return x.id === editingDayId; });
+    if (d) { d.num = num; d.name = name; }
+  } else {
+    f.days.push({id: uid(), num: num, name: name, tracks: [], _open: false});
+  }
+  saveFolders(); closeOv('ovDay'); showToast(t('toastSaved')); renderLibrary();
+}
+function deleteDay(folderId, dayId) {
+  if (!confirm(lang === 'ru' ? 'Удалить раздел?' : 'Delete section?')) return;
+  var f = folders.find(function(x) { return x.id === folderId; });
+  if (!f) return;
+  var i = (f.days || []).findIndex(function(x) { return x.id === dayId; });
+  if (i >= 0) f.days.splice(i, 1);
+  saveFolders(); showToast(t('toastDeleted')); renderLibrary();
+}
+
+// UPLOAD
+function openUploadModal(folderId, dayId) {
+  uploadFolderId = folderId; uploadDayId = dayId; pendingFiles = [];
+  var f = folders.find(function(x) { return x.id === folderId; });
+  document.getElementById('uploadTargetLabel').textContent = '&#128193; ' + (f ? f.name : '');
+  document.getElementById('fileQueue').innerHTML = '';
+  document.getElementById('uploadProg').style.display = 'none';
+  document.getElementById('fileInput').value = '';
+  document.getElementById('mUploadConfirm').disabled = false;
+  var days = f ? (f.days || []) : [];
+  var sel = document.getElementById('uploadDaySelector');
+  var chips = document.getElementById('uploadDayChips');
+  if (days.length) {
+    sel.style.display = 'block';
+    var html = '<div class="chip' + (!dayId ? ' selected' : '') + '" onclick="selectUploadDay(null,this)">' + t('noSection') + '</div>';
+    days.forEach(function(d) {
+      var label = (d.num ? (lang === 'ru' ? 'День ' : 'Day ') + d.num + ' — ' : '') + d.name;
+      html += '<div class="chip' + (dayId === d.id ? ' selected' : '') + '" onclick="selectUploadDay(\'' + d.id + '\',this)">' + esc(label) + '</div>';
+    });
+    chips.innerHTML = html;
+  } else {
+    sel.style.display = 'none';
   }
   openOv('ovUpload');
 }
-function selectUploadDay(dayId,el){
-  uploadDayId=dayId;
-  document.querySelectorAll('#uploadDayOptions .move-option').forEach(e=>e.classList.remove('selected'));
+function selectUploadDay(dayId, el) {
+  uploadDayId = dayId;
+  document.querySelectorAll('#uploadDayChips .chip').forEach(function(c) { c.classList.remove('selected'); });
   el.classList.add('selected');
 }
-function onFilesChosen(e){pendingFiles=Array.from(e.target.files);renderFileQueue();}
-function renderFileQueue(){
-  document.getElementById('fileQueue').innerHTML=pendingFiles.map((f,i)=>`
-    <div class="fq-item"><span class="fq-num">${i+1}</span><span class="fq-name">${esc(f.name.replace(/\.[^.]+$/,''))}</span>
-    <button class="fq-rm" onclick="pendingFiles.splice(${i},1);renderFileQueue()">✕</button></div>`).join('');
+function onFilesChosen(e) { pendingFiles = Array.from(e.target.files); renderFileQueue(); }
+function renderFileQueue() {
+  document.getElementById('fileQueue').innerHTML = pendingFiles.map(function(f, i) {
+    return '<div class="fq-item"><span class="fq-num">' + (i + 1) + '</span><span class="fq-name">' + esc(f.name.replace(/\.[^.]+$/, '')) + '</span><button class="fq-rm" onclick="pendingFiles.splice(' + i + ',1);renderFileQueue()">&#10005;</button></div>';
+  }).join('');
 }
-async function confirmUpload(){
-  if(!pendingFiles.length)return;
-  const folder=folders.find(x=>x.id===uploadFolderId);if(!folder)return;
-  let targetArr;
-  if(uploadDayId){
-    const day=(folder.days||[]).find(x=>x.id===uploadDayId);
-    if(!day)return;
-    if(!day.tracks)day.tracks=[];
-    targetArr=day.tracks;
+function confirmUpload() {
+  if (!pendingFiles.length) return;
+  var folder = folders.find(function(x) { return x.id === uploadFolderId; });
+  if (!folder) return;
+  var targetArr;
+  if (uploadDayId) {
+    var day = (folder.days || []).find(function(x) { return x.id === uploadDayId; });
+    if (!day) return;
+    if (!day.tracks) day.tracks = [];
+    targetArr = day.tracks;
   } else {
-    if(!folder.tracks)folder.tracks=[];
-    targetArr=folder.tracks;
+    if (!folder.tracks) folder.tracks = [];
+    targetArr = folder.tracks;
   }
-  const prog=document.getElementById('uploadProg');
-  prog.style.display='block';document.getElementById('mUploadConfirm').disabled=true;
-  for(let i=0;i<pendingFiles.length;i++){
-    const file=pendingFiles[i];
-    prog.innerHTML=`<span class="spin"></span>${t('uploading')} ${i+1}/${pendingFiles.length}: ${esc(file.name)}`;
-    const blobId=uid();await saveBlob(blobId,file);
-    const dur=await audioDur(file);
-    targetArr.push({id:uid(),blobId,name:file.name.replace(/\.[^.]+$/,''),duration:fmt(dur)});
+  var prog = document.getElementById('uploadProg');
+  prog.style.display = 'block';
+  document.getElementById('mUploadConfirm').disabled = true;
+  var i = 0;
+  function uploadNext() {
+    if (i >= pendingFiles.length) {
+      saveFolders(); prog.style.display = 'none';
+      document.getElementById('mUploadConfirm').disabled = false;
+      closeOv('ovUpload'); showToast(t('toastUploaded')); renderLibrary(); renderAdminFolderList();
+      return;
+    }
+    var file = pendingFiles[i];
+    prog.innerHTML = '<span class="spin"></span>' + t('uploading') + ' ' + (i + 1) + '/' + pendingFiles.length + ': ' + esc(file.name);
+    var blobId = uid();
+    saveBlob(blobId, file).then(function() {
+      return audioDur(file);
+    }).then(function(dur) {
+      targetArr.push({id: uid(), blobId: blobId, name: file.name.replace(/\.[^.]+$/, ''), duration: fmt(dur)});
+      i++;
+      uploadNext();
+    });
   }
-  saveFolders();prog.style.display='none';document.getElementById('mUploadConfirm').disabled=false;
-  closeOv('ovUpload');showToast(t('toastUploaded'));renderLibrary();renderAdminFolderList();
+  uploadNext();
 }
-function audioDur(file){return new Promise(res=>{const a=new Audio(),url=URL.createObjectURL(file);a.onloadedmetadata=()=>{URL.revokeObjectURL(url);res(a.duration);};a.onerror=()=>res(0);a.src=url;});}
-
-// ═══ DELETE TRACK ════════════════════════════════════════════
-function deleteTrack(folderId,dayId,trackId){
-  const folder=folders.find(f=>f.id===folderId);if(!folder)return;
-  let arr;
-  if(dayId){const day=(folder.days||[]).find(d=>d.id===dayId);if(!day)return;arr=day.tracks||[];}
-  else arr=folder.tracks||[];
-  const i=arr.findIndex(t=>t.id===trackId);
-  if(i>=0){const tr=arr[i];if(tr.blobId)delBlob(tr.blobId);arr.splice(i,1);}
-  saveFolders();showToast(t('toastDeleted'));renderLibrary();
-}
-
-// ═══ MOVE TRACK ═══════════════════════════════════════════════
-function openMoveModal(folderId,dayId,trackId){
-  const folder=folders.find(f=>f.id===folderId);if(!folder)return;
-  let arr=dayId?(folder.days||[]).find(d=>d.id===dayId)?.tracks||[]:folder.tracks||[];
-  const tr=arr.find(t=>t.id===trackId);if(!tr)return;
-  moveTrackInfo={folderId,fromDayId:dayId,trackId};moveTargetDayId=undefined;
-  document.getElementById('moveTrackName').textContent='🎧 '+tr.name;
-  const days=folder.days||[];
-  let html='';
-  // Option: no section
-  html+=`<div class="move-option ${dayId===null?'':''}${moveTargetDayId===null?'selected':''}" onclick="selectMoveTarget(null,this)">
-    <span class="move-option-icon">📂</span><span class="move-option-name">${t('noSection')}</span>
-  </div>`;
-  days.forEach(d=>{
-    const label=(d.num?(lang==='ru'?`День ${d.num}`:`Day ${d.num}`)+' — ':'')+d.name;
-    const isCurrent=dayId===d.id;
-    html+=`<div class="move-option ${isCurrent?'':''}${moveTargetDayId===d.id?'selected':''}" onclick="selectMoveTarget('${d.id}',this)">
-      <span class="move-option-icon">📅</span>
-      <div><div class="move-option-name">${esc(label)}</div>${isCurrent?`<div class="move-option-sub">${lang==='ru'?'текущий':'current'}</div>`:''}</div>
-    </div>`;
+function audioDur(file) {
+  return new Promise(function(res) {
+    var a = new Audio(), url = URL.createObjectURL(file);
+    a.onloadedmetadata = function() { URL.revokeObjectURL(url); res(a.duration); };
+    a.onerror = function() { res(0); };
+    a.src = url;
   });
-  document.getElementById('moveOptions').innerHTML=html;
+}
+
+// DELETE TRACK
+function deleteTrack(folderId, dayId, trackId) {
+  var folder = folders.find(function(f) { return f.id === folderId; });
+  if (!folder) return;
+  var arr = dayId ? ((folder.days || []).find(function(d) { return d.id === dayId; }) || {}).tracks || [] : folder.tracks || [];
+  var i = arr.findIndex(function(t) { return t.id === trackId; });
+  if (i >= 0) { var tr = arr[i]; if (tr.blobId) delBlob(tr.blobId); arr.splice(i, 1); }
+  saveFolders(); showToast(t('toastDeleted')); renderLibrary();
+}
+
+// MOVE TRACK
+function openMoveModal(folderId, dayId, trackId) {
+  var folder = folders.find(function(f) { return f.id === folderId; });
+  if (!folder) return;
+  var arr = dayId ? ((folder.days || []).find(function(d) { return d.id === dayId; }) || {}).tracks || [] : folder.tracks || [];
+  var tr = arr.find(function(t) { return t.id === trackId; });
+  if (!tr) return;
+  moveInfo = {folderId: folderId, fromDayId: dayId, trackId: trackId};
+  moveTarget = undefined;
+  document.getElementById('moveTrackName').textContent = '&#127911; ' + tr.name;
+  var days = folder.days || [];
+  var html = '<div class="move-opt' + (dayId === null ? '' : '') + '" onclick="selectMove(null,this)"><span>&#128194;</span><span>' + t('noSection') + '</span></div>';
+  days.forEach(function(d) {
+    var label = (d.num ? (lang === 'ru' ? 'День ' : 'Day ') + d.num + ' — ' : '') + d.name;
+    var cur = dayId === d.id ? ' <span style="font-size:10px;color:var(--txt3)">(' + (lang === 'ru' ? 'текущий' : 'current') + ')</span>' : '';
+    html += '<div class="move-opt" onclick="selectMove(\'' + d.id + '\',this)"><span>&#128197;</span><span>' + esc(label) + cur + '</span></div>';
+  });
+  document.getElementById('moveOptions').innerHTML = html;
   openOv('ovMove');
 }
-function selectMoveTarget(dayId,el){
-  moveTargetDayId=dayId;
-  document.querySelectorAll('#moveOptions .move-option').forEach(e=>e.classList.remove('selected'));
+function selectMove(dayId, el) {
+  moveTarget = dayId;
+  document.querySelectorAll('#moveOptions .move-opt').forEach(function(e) { e.classList.remove('selected'); });
   el.classList.add('selected');
 }
-function confirmMove(){
-  if(moveTargetDayId===undefined)return;
-  const {folderId,fromDayId,trackId}=moveTrackInfo;
-  const folder=folders.find(f=>f.id===folderId);if(!folder)return;
-  // Get track from source
-  let srcArr=fromDayId?(folder.days||[]).find(d=>d.id===fromDayId)?.tracks||[]:folder.tracks||[];
-  const ti=srcArr.findIndex(t=>t.id===trackId);if(ti<0)return;
-  const [tr]=srcArr.splice(ti,1);
-  // Put in target
-  let dstArr;
-  if(moveTargetDayId){const day=(folder.days||[]).find(d=>d.id===moveTargetDayId);if(!day)return;if(!day.tracks)day.tracks=[];dstArr=day.tracks;}
-  else{if(!folder.tracks)folder.tracks=[];dstArr=folder.tracks;}
+function confirmMove() {
+  if (moveTarget === undefined) return;
+  var folder = folders.find(function(f) { return f.id === moveInfo.folderId; });
+  if (!folder) return;
+  var srcArr = moveInfo.fromDayId ? ((folder.days || []).find(function(d) { return d.id === moveInfo.fromDayId; }) || {}).tracks || [] : folder.tracks || [];
+  var ti = srcArr.findIndex(function(t) { return t.id === moveInfo.trackId; });
+  if (ti < 0) return;
+  var tr = srcArr.splice(ti, 1)[0];
+  var dstArr;
+  if (moveTarget) {
+    var dst = (folder.days || []).find(function(d) { return d.id === moveTarget; });
+    if (!dst) return;
+    if (!dst.tracks) dst.tracks = [];
+    dstArr = dst.tracks;
+  } else {
+    if (!folder.tracks) folder.tracks = [];
+    dstArr = folder.tracks;
+  }
   dstArr.push(tr);
-  saveFolders();closeOv('ovMove');showToast(t('toastMoved'));renderLibrary();
+  saveFolders(); closeOv('ovMove'); showToast(t('toastMoved')); renderLibrary();
 }
 
-// ═══ UTILS ════════════════════════════════════════════════════
-function saveFolders(){localStorage.setItem('ag_folders',JSON.stringify(folders));}
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function openOv(id){document.getElementById(id).classList.add('show');}
-function closeOv(id){document.getElementById(id).classList.remove('show');}
-document.querySelectorAll('.overlay').forEach(ov=>ov.addEventListener('click',e=>{if(e.target===ov)closeOv(ov.id);}));
-let toastT;
-function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2500);}
+// UTILS
+function saveFolders() { localStorage.setItem('ag_folders', JSON.stringify(folders)); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function openOv(id) { document.getElementById(id).classList.add('show'); }
+function closeOv(id) { document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('.overlay').forEach(function(ov) {
+  ov.addEventListener('click', function(e) { if (e.target === ov) closeOv(ov.id); });
+});
+var toastT;
+function showToast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(function() { el.classList.remove('show'); }, 2500);
+}
 
-// ═══ INIT ═════════════════════════════════════════════════════
-openDB().then(async()=>{applyLang();renderMain();await maybeAutoSync();});
+// INIT
+openDB().then(function() {
+  applyLang();
+  renderMain();
+  setTimeout(maybeAutoSync, 600);
+});
 </script>
 </body>
 </html>
